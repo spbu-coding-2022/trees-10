@@ -1,4 +1,4 @@
-package src.main
+package main
 
 fun main() {
     println("Hello World!")
