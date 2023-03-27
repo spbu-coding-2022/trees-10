@@ -1,5 +1,3 @@
-package BinaryNode
-
 class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Comparable<BinaryNode<T, NodeType>> {
 
     var key : T private set
