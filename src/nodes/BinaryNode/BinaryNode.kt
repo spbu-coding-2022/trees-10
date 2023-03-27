@@ -2,8 +2,8 @@ package BinaryNode
 
 class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Comparable<BinaryNode<T, NodeType>> {
 
-    var key : T
-    var value : NodeType
+    var key : T private set
+    var value : NodeType private set
 
     private var right : BinaryNode<T, NodeType>? = null
     private var left : BinaryNode<T, NodeType>? = null
@@ -21,7 +21,9 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Compar
             else -> null
         }
 
-
+    override fun toString(): String {
+        return "<$key, $value>"
+    }
     override fun compareTo(other: BinaryNode<T, NodeType>): Int = this.key.compareTo(other.key)
     fun compareTo(key: T): Int = this.key.compareTo(key)
 }
