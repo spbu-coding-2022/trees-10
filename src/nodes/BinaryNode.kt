@@ -19,6 +19,10 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Compar
             else -> null
         }
 
+    fun delete(key: T): Nothing = TODO("delete NODE fun")
+
+    fun insert(key : T, value : NodeType): Nothing = TODO("insert NODE fun")
+
     override fun toString(): String {
         return "<$key, $value>"
     }
