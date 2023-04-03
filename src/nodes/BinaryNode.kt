@@ -12,16 +12,33 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Compar
     }
 
     fun search(key: T) : NodeType? =
-        when (this.compareTo(key)) {
+        when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
             0 -> this.value
             -1 -> this.left?.search(key)
             else -> null
-        }
+    }
 
     fun delete(key: T): Nothing = TODO("delete NODE fun")
 
-    fun insert(key : T, value : NodeType): Nothing = TODO("insert NODE fun")
+    @Throws(Exception::class)
+    fun insert(key : T, value : NodeType) {
+        val compare = key.compareTo(this.key)
+
+        if (compare == 1) {
+            if (right == null)
+                right = BinaryNode(key, value)
+            else
+                right!!.insert(key, value)
+        } else if (compare == 0) {
+            throw Exception("Keys can't be equal")
+        } else {
+            if (left == null)
+                left = BinaryNode(key, value)
+            else
+                left!!.insert(key, value)
+        }
+    }
 
     override fun toString(): String {
         return "<$key, $value>"
