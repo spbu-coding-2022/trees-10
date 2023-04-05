@@ -27,27 +27,25 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType, parent :
             else -> null
     }
 
+    private fun nodeRemove(node : BinaryNode<T, NodeType>?) : BinaryNode<T, NodeType>? {
+            if (!node!!.hasChildren)
+                return null
+
+                if (node!!.left != null || node!!.right == null) {
+                    if (node!!.right == null && node!!.left != null)
+                        return node!!.left
+                    else {
+                        TODO("остаточное условие")
+                    }
+                } else
+                    return node!!.right
+
+    }
     fun delete(key: T) {
-        if (right?.key == key) {
-            if (!right!!.hasChildren)
-                right = null
-            else {
-                if      (right!!.left == null && right!!.right != null)
-                    right = right!!.right
-                else if (right!!.right == null && right!!.left != null)
-                    right = right!!.left
-                else {
-
-                }
-            }
-
-        }
+        if     (right?.key == key)
+            right = nodeRemove(right)
        else if (left?.key == key) {
-            if (!left!!.hasChildren)
-                left = null
-            else {
-
-            }
+           left = nodeRemove(left)
        } else {
            if (key.compareTo(this.key) == -1)
                left?.delete(key)
