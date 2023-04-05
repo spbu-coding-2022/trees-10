@@ -1,14 +1,22 @@
-class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Comparable<BinaryNode<T, NodeType>> {
+class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType, parent : BinaryNode<T, NodeType>?) : Comparable<BinaryNode<T, NodeType>> {
 
     var key : T private set
     var value : NodeType private set
 
+//    private var parent : BinaryNode<T, NodeType>? = null
+
     private var right : BinaryNode<T, NodeType>? = null
     private var left : BinaryNode<T, NodeType>? = null
 
+    var hasChildren: Boolean
+        get() = !(this.right == null && this.left == null)
+        private set
+
     init {
+        hasChildren = false
         key.also { this.key = it }
         value.also { this.value = it }
+//        parent?.also { this.parent = it }
     }
 
     fun search(key: T) : NodeType? =
@@ -19,22 +27,49 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType) : Compar
             else -> null
     }
 
-    fun delete(key: T): Nothing = TODO("delete NODE fun")
+    fun delete(key: T) {
+        if (right?.key == key) {
+            if (!right!!.hasChildren)
+                right = null
+            else {
+                if      (right!!.left == null && right!!.right != null)
+                    right = right!!.right
+                else if (right!!.right == null && right!!.left != null)
+                    right = right!!.left
+                else {
 
+                }
+            }
+
+        }
+       else if (left?.key == key) {
+            if (!left!!.hasChildren)
+                left = null
+            else {
+
+            }
+       } else {
+           if (key.compareTo(this.key) == -1)
+               left?.delete(key)
+            else
+                right?.delete(key)
+       }
+
+    }
     @Throws(Exception::class)
     fun insert(key : T, value : NodeType) {
         val compare = key.compareTo(this.key)
 
         if (compare == 1) {
             if (right == null)
-                right = BinaryNode(key, value)
+                right = BinaryNode(key, value, this)
             else
                 right!!.insert(key, value)
         } else if (compare == 0) {
             throw Exception("Keys can't be equal")
         } else {
             if (left == null)
-                left = BinaryNode(key, value)
+                left = BinaryNode(key, value, this)
             else
                 left!!.insert(key, value)
         }
