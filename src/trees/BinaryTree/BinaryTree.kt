@@ -1,18 +1,18 @@
 package BinaryTree
 
-import BinaryNode
+import BinaryNode.BinaryNode
 
-class BinaryTree<T: Comparable<T>, NodeType> {
-    private var root : BinaryNode<T, NodeType>? = null
-    fun search(key : T) : NodeType? = root?.search(key)
-    fun remove(key: T)  {
+open class BinaryTree<T: Comparable<T>, NodeType> {
+    protected open var root : BinaryNode<T, NodeType>? = null
+    open fun search(key : T) : NodeType? = root?.search(key)
+    open fun remove(key: T)  {
         root = root?.remove(this.root, key)
     }
-    fun add(key : T, value : NodeType) {
+    open fun add(key : T, value : NodeType) {
         if (root == null)
-            root = BinaryNode(key, value, null)
+            root = BinaryNode(key, value)
         else {
-            root!!.insert(key, value)
+            root!!.add(key, value)
         }
     }
 }
