@@ -27,33 +27,42 @@ class BinaryNode<T: Comparable<T>, NodeType>(key : T, value : NodeType, parent :
             else -> null
     }
 
-    private fun nodeRemove(node : BinaryNode<T, NodeType>?) : BinaryNode<T, NodeType>? {
-            if (!node!!.hasChildren)
+    fun remove(root : BinaryNode<T, NodeType>?, key : T) : BinaryNode<T, NodeType>? {
+        if (root == null)
+            return null
+
+        if (key == this.key) { // когда remove вызывается для удаляемой вершины
+            if (this.right == null && this.left == null)
                 return null
+            // Простой случай - если есть только 1 потомок
+            else if  (this.left == null)
+                return this.right
+            else if (this.right == null)
+                return this.left
+            // Есть оба поддерева
+            else {
+                // Находим минимальное дерево
+                // Перенимаем его key и value
+                // Удаляем минимальное дерево
+                val minNode = findMin(this.right)
+                this.key = minNode!!.key
+                this.value = minNode.value
+                this.right = right!!.remove(this.right, minNode.key)
+                return this
+            }
 
-                if (node!!.left != null || node!!.right == null) {
-                    if (node!!.right == null && node!!.left != null)
-                        return node!!.left
-                    else {
-                        TODO("остаточное условие")
-                    }
-                } else
-                    return node!!.right
-
-    }
-    fun delete(key: T) {
-        if     (right?.key == key)
-            right = nodeRemove(right)
-       else if (left?.key == key) {
-           left = nodeRemove(left)
-       } else {
-           if (key.compareTo(this.key) == -1)
-               left?.delete(key)
+        } else {
+            // Замещаем поддеревья на минимальные
+            if (key < this.key)
+                this.left = left?.remove(left, key)
             else
-                right?.delete(key)
-       }
-
+                this.right = right?.remove(right, key)
+            return root
+        }
     }
+
+    private fun findMin(node: BinaryNode<T, NodeType>?): BinaryNode<T, NodeType>? = if (node?.left != null) findMin(node!!.left) else node
+
     @Throws(Exception::class)
     fun insert(key : T, value : NodeType) {
         val compare = key.compareTo(this.key)
