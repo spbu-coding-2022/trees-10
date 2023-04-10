@@ -1,0 +1,12 @@
+plugins {
+    id 'trees.kotlin-application-conventions'
+}
+
+dependencies {
+    implementation 'org.apache.commons:commons-text'
+    implementation project(':lib')
+}
+
+application {
+    mainClass = 'trees.app.AppKt'
+}
