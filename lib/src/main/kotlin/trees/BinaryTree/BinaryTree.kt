@@ -8,17 +8,16 @@ open class BinaryTree<T: Comparable<T>, NodeType> {
     open fun remove(key: T)  {
         root = root?.remove(this.root, key)
     }
-    open fun add(key : T, value : NodeType?) {
+    open fun add(key : T, value : NodeType? = null) {
         if (root == null)
             root = BinaryNode(key, value)
         else {
             root!!.add(key, value)
         }
     }
-    open fun add(key : T) = this.add(key, null)
-    open fun add(keys : Array<T>) {
-        for (item in keys)
-            this.add(item)
+    open fun add(keys : Array<T>, values : Array<NodeType?>? = null) {
+        for (i in 0..keys.count())
+            this.add(keys[i], values?.get(i))
     }
 
 }
