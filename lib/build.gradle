@@ -16,4 +16,11 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test " + descriptor + " message: " + event.message )
+    }
+    failFast = true
 }
