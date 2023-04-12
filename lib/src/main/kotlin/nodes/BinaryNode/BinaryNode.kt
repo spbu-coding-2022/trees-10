@@ -9,11 +9,11 @@ package BinaryNode
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType) : Comparable<BinaryNode<T, NodeType>> {
+open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) : Comparable<BinaryNode<T, NodeType>> {
 
     open var key : T = key
         protected set
-    open var value : NodeType = value
+    open var value : NodeType? = value
         protected set
 
     protected open var right : BinaryNode<T, NodeType>? = null
@@ -67,7 +67,7 @@ open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType) : Com
     private fun findMin(node: BinaryNode<T, NodeType>?): BinaryNode<T, NodeType>? = if (node?.left != null) findMin(node.left) else node
 
     @Throws(Exception::class)
-    open fun add(key : T, value : NodeType) {
+    open fun add(key : T, value : NodeType?) {
         val compare = key.compareTo(this.key)
 
         if (compare == 1) {
