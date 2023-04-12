@@ -76,7 +76,7 @@ open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) : Co
             else
                 right!!.add(key, value)
         } else if (compare == 0) {
-            throw Exception("Keys can't be equal")
+            this.value = value
         } else {
             if (left == null)
                 left = BinaryNode(key, value)
