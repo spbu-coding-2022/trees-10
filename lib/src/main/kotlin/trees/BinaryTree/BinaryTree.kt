@@ -16,4 +16,9 @@ open class BinaryTree<T: Comparable<T>, NodeType> {
         }
     }
     open fun add(key : T) = this.add(key, null)
+    open fun add(keys : Array<T>) {
+        for (item in keys)
+            this.add(item)
+    }
+
 }
