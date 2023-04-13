@@ -1,4 +1,4 @@
-package trees.BinaryTree
+package trees
 
 import BinaryTree.BinaryTree
 import org.junit.jupiter.api.Assertions.*

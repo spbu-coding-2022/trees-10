@@ -9,7 +9,7 @@ package BinaryNode
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) : Comparable<BinaryNode<T, NodeType>> {
+open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) {
 
     open var key : T = key
         protected set
@@ -85,8 +85,4 @@ open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) : Co
         }
     }
 
-    override fun toString(): String {
-        return "<$key, $value>"
-    }
-    override fun compareTo(other: BinaryNode<T, NodeType>): Int = this.key.compareTo(other.key)
 }
