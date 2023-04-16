@@ -1,19 +1,17 @@
-package BinaryTree
+package trees
 
-import BinaryNode.BinaryNode
+import nodes.BinaryNode
 
-open class BinaryTree<T: Comparable<T>, NodeType> {
-    protected open var root : BinaryNode<T, NodeType>? = null
-    open fun search(key : T) : NodeType? = root?.search(key)
-    open fun remove(key: T)  {
+open class BinaryTree<K: Comparable<K>, V> : AbstractTree<K, V, BinaryNode<K,V>>() {
+    override var root : BinaryNode<K, V>? = null
+    override fun search(key : K) : BinaryNode<K,V>? = root?.search(key)
+    override fun remove(key: K)  {
         root = root?.remove(this.root, key)
     }
-    open fun add(key : T, value : NodeType? = null) {
+    override fun add(key : K, value : V?) {
         if (root == null)
             root = BinaryNode(key, value)
-        else {
+        else
             root!!.add(key, value)
-        }
     }
-
 }

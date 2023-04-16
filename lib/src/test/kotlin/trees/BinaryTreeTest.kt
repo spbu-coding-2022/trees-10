@@ -1,11 +1,9 @@
 package trees
 
-import BinaryTree.BinaryTree
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.function.Executable
 import java.time.Duration.ofMillis
 import kotlin.random.Random
@@ -29,7 +27,7 @@ class BinaryTreeTest {
             val tree = BinaryTree<Int, String>()
             tree.add(100, "root")
             tree.remove(100)
-            assertEquals(null, tree.search(100))
+            assertEquals(null, tree.search(100)?.value)
         }
         @Test
         @DisplayName("Simple element remove")
@@ -41,10 +39,10 @@ class BinaryTreeTest {
             tree.add(13)
             tree.remove(13)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)) },
-                Executable { assertEquals("a", tree.search(10)) },
-                Executable { assertEquals("b", tree.search(14)) },
-                Executable { assertEquals(null, tree.search(13)) }
+                Executable { assertEquals("root", tree.search(8)?.value) },
+                Executable { assertEquals("a", tree.search(10)?.value) },
+                Executable { assertEquals("b", tree.search(14)?.value) },
+                Executable { assertEquals(null, tree.search(13)?.value) }
             )
         }
         @Test
@@ -57,10 +55,10 @@ class BinaryTreeTest {
             tree.add(13, "c")
             tree.remove(14)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)) },
-                Executable { assertEquals("a", tree.search(10)) },
-                Executable { assertEquals("c", tree.search(13)) },
-                Executable { assertEquals(null, tree.search(14)) }
+                Executable { assertEquals("root", tree.search(8)?.value) },
+                Executable { assertEquals("a", tree.search(10)?.value) },
+                Executable { assertEquals("c", tree.search(13)?.value) },
+                Executable { assertEquals(null, tree.search(14)?.value) }
             )
         }
         @Test
@@ -76,12 +74,12 @@ class BinaryTreeTest {
 
             tree.remove(3)
             assertAll("elements",
-                Executable { assertEquals("a", tree.search(4)) },
-                Executable { assertEquals("b", tree.search(1)) },
-                Executable { assertEquals(null, tree.search(3)) },
-                Executable { assertEquals("c", tree.search(6)) },
-                Executable { assertEquals("d", tree.search(7)) },
-                Executable { assertEquals("root", tree.search(8)) }
+                Executable { assertEquals("a", tree.search(4)?.value) },
+                Executable { assertEquals("b", tree.search(1)?.value) },
+                Executable { assertEquals(null, tree.search(3)?.value) },
+                Executable { assertEquals("c", tree.search(6)?.value) },
+                Executable { assertEquals("d", tree.search(7)?.value) },
+                Executable { assertEquals("root", tree.search(8)?.value) }
             )
         }
     }
@@ -92,7 +90,7 @@ class BinaryTreeTest {
         fun `Simple add`() {
             val tree = BinaryTree<Int, String>()
             tree.add(30, "root")
-            assertEquals("root", tree.search(30))
+            assertEquals("root", tree.search(30)?.value)
         }
         @Test
         @DisplayName("Equal keys add")
@@ -100,7 +98,7 @@ class BinaryTreeTest {
             val tree = BinaryTree<Int, String>()
             tree.add(100, "abc")
             tree.add(100, "root")
-            assertEquals("root", tree.search(100))
+            assertEquals("root", tree.search(100)?.value)
         }
         @Test
         @DisplayName("Multiply add")
@@ -110,7 +108,7 @@ class BinaryTreeTest {
                 val list : List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
                 for (item in list)
                     tree.add(item, 0)
-                assertEquals(tree.search(list.last()), 0)
+                assertEquals(tree.search(list.last())?.value, 0)
             }
         }
     }

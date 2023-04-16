@@ -1,6 +1,6 @@
 package app
 
-import BinaryTree.BinaryTree
+import trees.BinaryTree
 
 fun main() {
     val tree = BinaryTree<Int, String>()
