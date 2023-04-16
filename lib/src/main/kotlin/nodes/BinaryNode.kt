@@ -9,25 +9,20 @@ package nodes
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) {
+open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var value: V?)  : AbstractNode<K, V, BinaryNode<K, V>>() {
 
-    open var key : T = key
-        protected set
-    open var value : NodeType? = value
-        protected set
+    override var right : BinaryNode<K, V>? = null
+    override var left : BinaryNode<K, V>? = null
 
-    protected open var right : BinaryNode<T, NodeType>? = null
-    protected open var left : BinaryNode<T, NodeType>? = null
-
-    open fun search(key: T) : NodeType? =
+    open fun search(key: K) : BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
-            0 -> this.value
+            0 -> this
             -1 -> this.left?.search(key)
             else -> null
     }
 
-    open fun remove(root : BinaryNode<T, NodeType>?, key : T) : BinaryNode<T, NodeType>? {
+    open fun remove(root : BinaryNode<K, V>?, key : K) : BinaryNode<K, V>? {
         if (root == null)
             return null
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
@@ -64,10 +59,9 @@ open class BinaryNode<T: Comparable<T>, NodeType>(key: T, value: NodeType?) {
      * @param[node] Узел для которого ищется минимальный эл-т.
      * @return Наименьший узел.
      */
-    private fun findMin(node: BinaryNode<T, NodeType>?): BinaryNode<T, NodeType>? = if (node?.left != null) findMin(node.left) else node
+    private fun findMin(node: BinaryNode<K, V>?): BinaryNode<K, V>? = if (node?.left != null) findMin(node.left) else node
 
-    @Throws(Exception::class)
-    open fun add(key : T, value : NodeType?) {
+    open fun add(key : K, value : V?) {
         val compare = key.compareTo(this.key)
 
         if (compare == 1) {
