@@ -1,4 +1,4 @@
-package BinaryNode
+package nodes
 
 /**
  * Класс узла для бинарного дерева.

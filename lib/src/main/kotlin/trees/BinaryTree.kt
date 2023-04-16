@@ -1,4 +1,4 @@
-package BinaryTree
+package trees
 
 import BinaryNode.BinaryNode
 
