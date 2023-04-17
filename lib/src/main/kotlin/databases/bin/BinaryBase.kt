@@ -1,4 +1,4 @@
-package databases
+package databases.bin
 
 import nodes.BinaryNode
 import java.io.Closeable
@@ -14,13 +14,16 @@ class BinaryBase (path: String): Closeable {
     private val addNodeStatement by lazy { connection.prepareStatement("INSERT INTO BinaryNodes (x, y, key, value) VALUES (?, ?, ?, ?);") }
     private val getNodeByKey by lazy { connection.prepareStatement("SELECT x, y, value FROM BinaryNodes WHERE BinaryNodes.key = ?;") }
     private val removeNodeByKey by lazy { connection.prepareStatement("DELETE FROM BinaryNodes WHERE key=?;") }
-    fun create() = createBaseStatement.execute()
+    fun open() = createBaseStatement.execute()
 
     fun removeNode(key : Int) {
         removeNodeByKey.setInt(1, key)
         removeNodeByKey.execute()
     }
     fun addNode(node : Node<BinaryNode<Int, String>>) {
+        if (search(node.binNode.key) != null)
+            return
+
         addNodeStatement.setInt(1, node.x)
         addNodeStatement.setInt(2, node.y)
         addNodeStatement.setInt(3, node.binNode.key)
