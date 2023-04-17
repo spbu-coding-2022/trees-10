@@ -39,9 +39,11 @@ open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var val
                 // Перенимаем его key и value
                 // Удаляем минимальное дерево
                 val minNode = findMin(this.right)
-                this.key = minNode!!.key
-                this.value = minNode.value
-                this.right = right!!.remove(this.right, minNode.key)
+                minNode?.let {
+                    this.key = it.key
+                    this.value = it.value
+                }
+                this.right = right?.remove(right, key)
                 return this
             }
 
@@ -68,14 +70,14 @@ open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var val
             if (right == null)
                 right = BinaryNode(key, value)
             else
-                right!!.add(key, value)
+                right?.add(key, value)
         } else if (compare == 0) {
             this.value = value
         } else {
             if (left == null)
                 left = BinaryNode(key, value)
             else
-                left!!.add(key, value)
+                left?.add(key, value)
         }
     }
 
