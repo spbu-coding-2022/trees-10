@@ -11,12 +11,35 @@ class AVLTree<K: Comparable<K>, V> {
         root = insert(root , key , value)
     }
 
-    fun delete(node: AVLNode<K, V>) {
-
+    fun remove(key: K) {
+        root = delete(root, key)
     }
 
+    fun delete(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
+        if (node == null) {
+            return null
+        }
 
-    //Called on node to insert a key value pair under it.
+        if (key < node.key) {
+            node.left = delete(node.left , key)
+        } else if (key > node.key) {
+            node.right = delete(node.right , key)
+        } else {
+            if (node.left == null) {
+                return node.right
+            } else if (node.right == null) {
+                return node.left
+            }
+
+            val temp = findMin(node)
+            node.value = temp.value
+            node.right = delete(node.right, temp.key)
+
+        }
+
+        return rebalance(node) ?: throw Exception("Rebalance returned a null value")
+    }
+
     private fun insert(node: AVLNode<K, V>? , key: K, value: V): AVLNode<K, V> {
         if (node == null) {
             return AVLNode<K, V>(key, value)
@@ -34,6 +57,8 @@ class AVLTree<K: Comparable<K>, V> {
 
         return rebalance(node) ?: throw Exception("Rebalance returned a null value")
     }
+
+    private fun findMin(node: AVLNode<K, V>): AVLNode<K, V> = if (node.left != null) findMin(node.left!!) else node
 
     private fun rebalance(node: AVLNode<K, V>): AVLNode<K, V>? {
         node.height = 1 + max(getHeight(node.left) , getHeight(node.right))
