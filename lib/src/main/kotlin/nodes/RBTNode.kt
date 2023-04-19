@@ -7,8 +7,9 @@ class RBNode<K : Comparable<K>, V>(override var key: K, override var value: V?) 
 
     override var right: RBNode<K, V>? = null
     override var left: RBNode<K, V>? = null
+
+    var parent: RBNode<K, V>? = null
     var color: Color = Color.BLACK
-        private set
 
     fun flipColor() {
         color = when (color) {
