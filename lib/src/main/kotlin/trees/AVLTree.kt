@@ -3,19 +3,37 @@ package trees
 import nodes.AVLNode
 import kotlin.math.max
 
-class AVLTree<K: Comparable<K>, V> {
-    var root: AVLNode<K, V>? = null
+class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
+    override var root: AVLNode<K, V>? = null
 
 
-    fun add(key: K, value: V) {
+    override fun add(key: K, value: V?) {
         root = insert(root , key , value)
     }
 
-    fun remove(key: K) {
+    override fun remove(key: K) {
         root = delete(root, key)
     }
 
-    fun delete(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
+    override fun search(key: K): AVLNode<K, V>? {
+        return searchNode(root, key)
+    }
+
+    private fun searchNode(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
+        if (node == null) {
+            return null
+        }
+
+        if (key < node.key) {
+            return searchNode(node.left, key)
+        } else if (key > node.key) {
+            return searchNode(node.right, key)
+        } else {
+            return node
+        }
+    }
+
+    private fun delete(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
         if (node == null) {
             return null
         }
@@ -40,12 +58,12 @@ class AVLTree<K: Comparable<K>, V> {
         return rebalance(node) ?: throw Exception("Rebalance returned a null value")
     }
 
-    private fun insert(node: AVLNode<K, V>? , key: K, value: V): AVLNode<K, V> {
+    private fun insert(node: AVLNode<K, V>? , key: K, value: V?): AVLNode<K, V> {
         if (node == null) {
-            return AVLNode<K, V>(key, value)
+            return AVLNode(key, value)
         }
 
-        var delta: Int = key.compareTo(node.key)
+        val delta: Int = key.compareTo(node.key)
 
         if (delta < 0) {
             node.left = insert(node.left , key , value)
