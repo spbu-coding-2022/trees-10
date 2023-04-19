@@ -1,8 +1,7 @@
-package RBTree
+package trees
 
-import RBTNode
-import AbstractTree
-
+import nodes.Color
+import nodes.RBNode
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     override var root: RBNode<K, V>? = null
@@ -10,9 +9,9 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     override fun search(key: K): RBNode<K, V>? {
         var node = root
         while (node != null) {
-            when {
-                key < node.key -> node = node.left
-                key > node.key -> node = node.right
+            node = when {
+                key < node.key -> node.left
+                key > node.key -> node.right
                 else -> return node                     //when found - return node
             }
         }
@@ -37,7 +36,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
         newNode.color = Color.RED
         newNode.parent = parent
 
-        if (key < parent?.key ?: throw NullPointerException("Parent is null")) {        //move up the tree, find  needed place
+        if (key < (parent?.key ?: throw NullPointerException("Parent is null"))) {        //move up the tree, find  needed place
             parent.left = newNode
         } else {
             parent.right = newNode
@@ -52,7 +51,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     private fun removeNode(node: RBNode<K, V>) {
-        var replacementNode = when {
+        val replacementNode = when {
             node.left == null -> node.right
             node.right == null -> node.left
             else -> {
@@ -65,7 +64,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     successor.right = node.right
                     successor.right?.parent = successor
                 }
-                transplant(node, successor ?: throw IllegalArgumentException("Node cannot be null"))
+                transplant(node, successor)
                 successor.left = node.left
                 successor.left?.parent = successor
                 successor.color = node.color
@@ -152,7 +151,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
                     currentNode.parent?.color = Color.BLACK
                     sibling?.right?.color = Color.BLACK
-                    leftRotate(currentNode.parent!!) ?: throw IllegalStateException("Left rotate failed")
+                    leftRotate(currentNode.parent!!)
                     currentNode = root
                 }
             } else {
@@ -176,7 +175,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
                     currentNode.parent?.color = Color.BLACK
                     sibling?.left?.color = Color.BLACK
-                    rightRotate(currentNode.parent!!) ?: throw IllegalStateException("Right rotate failed")
+                    rightRotate(currentNode.parent!!)
                     currentNode = root
                 }
             }
@@ -228,6 +227,6 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
         } else {
             u.parent!!.right = v ?: throw IllegalStateException("Node v is null")
         }
-        v?.parent = u?.parent
+        v.parent = u?.parent
     }
 }

@@ -1,6 +1,8 @@
-import org.junit.Assert.*
-import org.junit.Test
-import RBTree
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
+import trees.RBTree
 
 class RBTreeTest {
     @Test
@@ -9,9 +11,9 @@ class RBTreeTest {
         tree.add(1, "one")
         tree.add(2, "two")
         tree.add(3, "three")
-        assertEquals("one", tree.search(1))
-        assertEquals("two", tree.search(2))
-        assertEquals("three", tree.search(3))
+        assertEquals("one", tree.search(1)?.value)
+        assertEquals("two", tree.search(2)?.value)
+        assertEquals("three", tree.search(3)?.value)
     }
 
     @Test
@@ -20,9 +22,9 @@ class RBTreeTest {
         tree.add(1, "one")
         tree.add(2, "two")
         tree.add(3, "three")
-        assertEquals("one", tree.search(1))
-        assertEquals("two", tree.search(2))
-        assertEquals("three", tree.search(3))
+        assertEquals("one", tree.search(1)?.value)
+        assertEquals("two", tree.search(2)?.value)
+        assertEquals("three", tree.search(3)?.value)
         assertNull(tree.search(4))
     }
 
@@ -33,9 +35,9 @@ class RBTreeTest {
         tree.add(2, "two")
         tree.add(3, "three")
         tree.remove(2)
-        assertEquals("one", tree.search(1))
-        assertNull(tree.search(2))
-        assertEquals("three", tree.search(3))
+        assertEquals("one", tree.search(1)?.value)
+        assertNull(tree.search(2)?.value)
+        assertEquals("three", tree.search(3)?.value)
     }
 
     @Test
@@ -44,15 +46,15 @@ class RBTreeTest {
         tree.add(1, "one")
         tree.add(2, "two")
         tree.add(3, "three")
-        assertEquals("one", tree.search(1))
-        assertEquals("two", tree.search(2))
-        assertEquals("three", tree.search(3))
+        assertEquals("one", tree.search(1)?.value)
+        assertEquals("two", tree.search(2)?.value)
+        assertEquals("three", tree.search(3)?.value)
         tree.remove(2)
-        assertEquals("one", tree.search(1))
+        assertEquals("one", tree.search(1)?.value)
         assertNull(tree.search(2))
-        assertEquals("three", tree.search(3))
+        assertEquals("three", tree.search(3)?.value)
         tree.add(4, "four")
-        assertEquals("four", tree.search(4))
+        assertEquals("four", tree.search(4)?.value)
         assertNull(tree.search(2))
     }
 
@@ -63,7 +65,7 @@ class RBTreeTest {
             tree.add(i, i.toString())
         }
         for (i in 1..1000) {
-            assertEquals(i.toString(), tree.search(i))
+            assertEquals(i.toString(), tree.search(i)?.value)
         }
     }
 }
