@@ -2,6 +2,8 @@ package trees
 
 import nodes.Color
 import nodes.RBNode
+import DB.RBTreeSerializer
+import java.io.*
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     override var root: RBNode<K, V>? = null
@@ -229,5 +231,17 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
             u.parent!!.right = v ?: throw IllegalStateException("Node v is null")
         }
         v.parent = u?.parent
+    }
+
+    fun saveToFile(filePath: String) {
+        val serializer = RBTreeSerializer()
+        serializer.serialize(this, filePath)
+    }
+
+    companion object {
+        fun loadFromFile(filePath: String): RBTree {
+            val serializer = RBTreeSerializer()
+            return serializer.deserialize(filePath)
+        }
     }
 }
