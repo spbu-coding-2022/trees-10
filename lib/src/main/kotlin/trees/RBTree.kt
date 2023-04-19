@@ -135,7 +135,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                 if (sibling?.color == Color.RED) {
                     sibling.color = Color.BLACK
                     currentNode.parent?.color = Color.RED
-                    leftRotate(currentNode.parent!!)
+                    currentNode.parent?.let { leftRotate(it) }
                     sibling = currentNode.parent?.right
                 }
                 if (sibling?.left?.color == Color.BLACK && sibling.right?.color == Color.BLACK) {
@@ -145,13 +145,13 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     if (sibling?.right?.color == Color.BLACK) {
                         sibling.left?.color = Color.BLACK
                         sibling.color = Color.RED
-                        rightRotate(sibling)
+                        sibling?.let { rightRotate(it) }
                         sibling = currentNode.parent?.right
                     }
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
                     currentNode.parent?.color = Color.BLACK
                     sibling?.right?.color = Color.BLACK
-                    leftRotate(currentNode.parent!!)
+                    currentNode.parent?.let { leftRotate(it) }
                     currentNode = root
                 }
             } else {
@@ -159,7 +159,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                 if (sibling?.color == Color.RED) {
                     sibling.color = Color.BLACK
                     currentNode.parent?.color = Color.RED
-                    rightRotate(currentNode.parent!!)
+                    currentNode.parent?.let { rightRotate(it) }
                     sibling = currentNode.parent?.left
                 }
                 if (sibling?.right?.color == Color.BLACK && sibling.left?.color == Color.BLACK) {
@@ -169,19 +169,20 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     if (sibling?.left?.color == Color.BLACK) {
                         sibling.right?.color = Color.BLACK
                         sibling.color = Color.RED
-                        leftRotate(sibling)
+                        sibling?.let { leftRotate(it) }
                         sibling = currentNode.parent?.left
                     }
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
                     currentNode.parent?.color = Color.BLACK
                     sibling?.left?.color = Color.BLACK
-                    rightRotate(currentNode.parent!!)
+                    currentNode.parent?.let { rightRotate(it) }
                     currentNode = root
                 }
             }
         }
         currentNode?.color = Color.BLACK
     }
+
 
     private fun leftRotate(node: RBNode<K, V>) {
         val rightChild = node.right ?: throw IllegalStateException("Right child is null")
