@@ -22,6 +22,30 @@ class BinaryTreeTest {
     }
 
     @Nested
+    inner class `Search check` {
+        @Test
+        @DisplayName("Existing elements search")
+        fun `Existing elements search`() {
+            tree.add(100, "root")
+            tree.add(150, "root -> right")
+            tree.add(50, "root -> left")
+            tree.add(30, "root -> left -> left")
+
+            assertAll(
+                Executable { assertEquals("root", tree.search(100).value) },
+                Executable { assertEquals("root -> right", tree.search(150).value) },
+                Executable { assertEquals("root -> left", tree.search(50).value) },
+                Executable { assertEquals("root -> left -> left", tree.search(30).value) })
+        }
+
+        @Test
+        @DisplayName("Not-existent elements search")
+        fun `Not-existent elements search`() {
+            assertThrows(NodeNotFoundException::class.java) { tree.search(100) }
+        }
+    }
+
+    @Nested
     inner class `Remove check` {
 
         @Test
@@ -66,7 +90,7 @@ class BinaryTreeTest {
             tree.remove(14)
 
             assertAll("elements",
-                Executable { assertTrue(tree.nodeExists(8, "root"))},
+                Executable { assertTrue(tree.nodeExists(8, "root")) },
                 Executable { assertTrue(tree.nodeExists(10, "a")) },
                 Executable { assertTrue(tree.nodeExists(13, "c")) },
                 Executable { assertFalse(tree.nodeExists(14, null)) },
@@ -81,13 +105,13 @@ class BinaryTreeTest {
             tree.add(120)
             tree.add(130)
             tree.add(109)
-            assertThrows(NodeNotFoundException::class.java) {tree.remove(150)}
+            assertThrows(NodeNotFoundException::class.java) { tree.remove(150) }
         }
 
         @Test
         @DisplayName("Non-existent root remove")
         fun `Non-existent root remove`() {
-            assertThrows(NodeNotFoundException::class.java) {tree.remove(100)}
+            assertThrows(NodeNotFoundException::class.java) { tree.remove(100) }
         }
 
         @Test
@@ -132,7 +156,7 @@ class BinaryTreeTest {
         fun `Equal keys add`() {
             tree.add(100)
 
-            assertThrows(NodeAlreadyExistsException::class.java) {tree.add(100)}
+            assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
 
         @Test
@@ -146,9 +170,10 @@ class BinaryTreeTest {
                 Executable { assertTrue(tree.nodeExists(100, "root")) },
                 Executable { assertTrue(tree.nodeExists(150, "root -> right")) },
                 Executable { assertTrue(tree.nodeExists(80, "root -> left")) },
-                Executable { assertTrue(tree.root?.childrenCheck() ?: false)}
+                Executable { assertTrue(tree.root?.childrenCheck() ?: false) }
             )
         }
+
         @Test
         @DisplayName("Large number of elements add")
         fun `Add a large number of elements`() {
