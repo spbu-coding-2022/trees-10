@@ -1,7 +1,8 @@
 package nodes
 
-import exceptions.NodeAlreadyExists
-import exceptions.NodeNotFound
+import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
+import exceptions.NullNodeException
 
 /**
  * Класс узла для бинарного дерева.
@@ -35,28 +36,30 @@ class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             // Случай где есть два потомка
             else {
                 // Находим минимальное дерево
-                val minNode = findMin(right)
+                val minNode = findMin(right) ?: throw NullNodeException()
+
                 // Перенимаем его key и value
-                minNode?.let {
+                minNode.let {
                     this.key = it.key
                     this.value = it.value
+                    // Удаляем минимальное дерево
+                    this.right = right?.remove(right, it.key)
                 }
-                // Удаляем минимальное дерево
-                this.right = right?.remove(right, key)
                 return this
             }
 
         } else {
+            if (left == null && right == null)
+                throw NodeNotFoundException()
             // Идём дальше по дереву искать что удалить
             if (key < this.key)
                 this.left = left?.remove(left, key)
-                    ?: throw NodeNotFound()
             else
                 this.right = right?.remove(right, key)
-                    ?: throw NodeNotFound()
             return root
         }
     }
+
     fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
@@ -67,7 +70,7 @@ class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
                 right?.add(key, value)
         } else if (compare == 0)
         // Попытка добавления новой ноды с уже существующим в дереве ключом
-            throw NodeAlreadyExists()
+            throw NodeAlreadyExistsException()
         else {
             if (left == null)
                 left = BinaryNode(key, value)
