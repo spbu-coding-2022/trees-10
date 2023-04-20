@@ -12,9 +12,9 @@ import exceptions.NodeNotFound
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
+class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
     AbstractNode<K, V, BinaryNode<K, V>>(key, value) {
-    open fun search(key: K): BinaryNode<K, V>? =
+    fun search(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
             0 -> this
@@ -22,7 +22,7 @@ open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             else -> null
         }
 
-    open fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
+    fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
             if (right == null && left == null)
                 return null // просто стираем ноду
@@ -59,7 +59,7 @@ open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
         }
     }
 
-    open fun add(key: K, value: V?) {
+    fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
         if (compare == 1) {
