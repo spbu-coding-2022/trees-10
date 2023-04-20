@@ -1,6 +1,7 @@
 package trees
 
 import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
 import nodes.BinaryNode
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -34,7 +35,7 @@ class BinaryTreeTest {
         }
 
         @Test
-        @DisplayName("Remove node without children")
+        @DisplayName("Node without children remove")
         fun `Remove node without children`() {
             tree.add(8, "root")
             tree.add(10, "a")
@@ -71,6 +72,12 @@ class BinaryTreeTest {
                 Executable { assertFalse(tree.nodeExists(14, null)) },
                 Executable { assertTrue(tree.root?.childrenCheck() ?: false) }
             )
+        }
+
+        @Test
+        @DisplayName("Non-existent element remove")
+        fun `Non-existent element remove`() {
+            assertThrows(NodeNotFoundException::class.java) {tree.remove(100)}
         }
 
         @Test
@@ -133,7 +140,7 @@ class BinaryTreeTest {
             )
         }
         @Test
-        @DisplayName("Add a large number of elements")
+        @DisplayName("Large number of elements add")
         fun `Add a large number of elements`() {
             assertTimeout(ofMillis(1000)) {
                 val list: List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
