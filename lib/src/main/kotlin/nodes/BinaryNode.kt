@@ -1,5 +1,6 @@
 package nodes
 
+import exceptions.NodeAlreadyExists
 import exceptions.NodeNotFound
 
 /**
@@ -20,6 +21,7 @@ open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             -1 -> this.left?.search(key)
             else -> null
         }
+
     open fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
             if (right == null && left == null)
@@ -56,6 +58,7 @@ open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             return root
         }
     }
+
     open fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
@@ -64,9 +67,10 @@ open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
                 right = BinaryNode(key, value)
             else
                 right?.add(key, value)
-        } else if (compare == 0) {
-            this.value = value
-        } else {
+        } else if (compare == 0)
+        // Попытка добавления новой ноды с уже существующим в дереве ключом
+            throw NodeAlreadyExists()
+        else {
             if (left == null)
                 left = BinaryNode(key, value)
             else
