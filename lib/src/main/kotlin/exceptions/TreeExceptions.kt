@@ -5,6 +5,6 @@ package exceptions
  * */
 open class TreeException(message: String) : Exception(message)
 
-class NodeNotFound() : TreeException("Подходящий для выполнения операции узел дерева не найден")
+class NodeNotFoundException() : TreeException("Подходящий для выполнения операции узел дерева не найден")
 
-class NodeAlreadyExists() : TreeException("Узел дерева с таким ключом уже существует")
+class NodeAlreadyExistsException() : TreeException("Узел дерева с таким ключом уже существует")
