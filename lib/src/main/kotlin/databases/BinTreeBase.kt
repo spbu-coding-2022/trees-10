@@ -1,4 +1,4 @@
-package databases.bin
+package databases
 
 import nodes.BinaryNode
 import java.io.Closeable
