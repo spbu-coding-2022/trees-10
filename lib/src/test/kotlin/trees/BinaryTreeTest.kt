@@ -77,6 +77,16 @@ class BinaryTreeTest {
         @Test
         @DisplayName("Non-existent element remove")
         fun `Non-existent element remove`() {
+            tree.add(100)
+            tree.add(120)
+            tree.add(130)
+            tree.add(109)
+            assertThrows(NodeNotFoundException::class.java) {tree.remove(150)}
+        }
+
+        @Test
+        @DisplayName("Non-existent root remove")
+        fun `Non-existent root remove`() {
             assertThrows(NodeNotFoundException::class.java) {tree.remove(100)}
         }
 
