@@ -21,7 +21,6 @@ class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             -1 -> this.left?.search(key)
             else -> null
         }
-
     fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
             if (right == null && left == null)
@@ -58,7 +57,6 @@ class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
             return root
         }
     }
-
     fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
