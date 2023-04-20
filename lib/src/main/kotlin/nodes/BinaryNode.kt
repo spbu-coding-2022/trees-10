@@ -11,12 +11,8 @@ import exceptions.NodeNotFound
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<K : Comparable<K>, V>(override var key: K, override var value: V?) :
-    AbstractNode<K, V, BinaryNode<K, V>>() {
-
-    override var right: BinaryNode<K, V>? = null
-    override var left: BinaryNode<K, V>? = null
-
+open class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
+    AbstractNode<K, V, BinaryNode<K, V>>(key, value) {
     open fun search(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
@@ -24,7 +20,6 @@ open class BinaryNode<K : Comparable<K>, V>(override var key: K, override var va
             -1 -> this.left?.search(key)
             else -> null
         }
-
     open fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
             if (right == null && left == null)
@@ -61,18 +56,6 @@ open class BinaryNode<K : Comparable<K>, V>(override var key: K, override var va
             return root
         }
     }
-
-    /**
-     * @param[node] Узел для которого ищется минимальный эл-т.
-     * @return Наименьший узел.
-     */
-    private fun findMin(node: BinaryNode<K, V>?): BinaryNode<K, V>? {
-        return if (node?.left != null)
-            findMin(node.left)
-        else
-            node
-    }
-
     open fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
@@ -91,4 +74,14 @@ open class BinaryNode<K : Comparable<K>, V>(override var key: K, override var va
         }
     }
 
+    /**
+     * @param[node] Узел для которого ищется минимальный эл-т.
+     * @return Наименьший узел.
+     */
+    private fun findMin(node: BinaryNode<K, V>?): BinaryNode<K, V>? {
+        return if (node?.left != null)
+            findMin(node.left)
+        else
+            node
+    }
 }
