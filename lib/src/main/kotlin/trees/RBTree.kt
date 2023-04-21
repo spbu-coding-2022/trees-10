@@ -2,8 +2,7 @@ package trees
 
 import nodes.Color
 import nodes.RBNode
-import DB.RBTreeSerializer
-import java.io.*
+import database.RBT.RBTreeSerializer
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     override var root: RBNode<K, V>? = null
@@ -239,7 +238,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     companion object {
-        fun loadFromFile(filePath: String): RBTree {
+        fun loadFromFile(filePath: String): RBTree<*, *> {
             val serializer = RBTreeSerializer()
             return serializer.deserialize(filePath)
         }
