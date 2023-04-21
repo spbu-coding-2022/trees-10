@@ -1,9 +1,19 @@
 name: Gradle Build&Test
-on: [push]
+on:
+  push:
+    branches-gnore:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   gradle:
   
-    runs-on: [ubuntu-latest, windows-latest]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    
     steps:
     
     - uses: actions/checkout@v3
