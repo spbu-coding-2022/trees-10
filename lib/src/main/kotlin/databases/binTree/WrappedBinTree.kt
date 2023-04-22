@@ -37,7 +37,6 @@ class WrappedBinTree<K : Comparable<K>, V>() {
         // Если ключ не совпадает ни с одной вершиной из имеющихся
         throw NodeNotFoundException()
     }
-
     fun getWrappedNode(key: K): WrappedBinNode<K, V> {
         for (item in wrappedNodesList)
             if (item.key == key)

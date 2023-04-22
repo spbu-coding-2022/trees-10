@@ -1,11 +1,13 @@
 package databases.binTree
 
+import exceptions.NodeNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import trees.BinaryTree
 import nodes.BinaryNode
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import kotlin.random.Random
 import kotlin.test.BeforeTest
 
@@ -76,6 +78,33 @@ class WrappedBinTreeTest {
         }
     }
 
+    @Nested
+    inner class `Coordinates check` {
+        @Test
+        @DisplayName("Coordinate change check")
+        fun `Coordinate change check`() {
+            binTree.add(100, "root")
+
+            wrappedTree.addTree(binTree)
+            wrappedTree.setCoordinate(100, 10.0, -10.0)
+
+            assertAll("elements",
+                Executable { assertTrue(wrappedTree.getWrappedNode(100).x == 10.0)},
+                Executable { assertTrue(wrappedTree.getWrappedNode(100).y == -10.0)}
+            )
+        }
+
+        @Test
+        @DisplayName("Coordinate change check")
+        fun `Non-existent coordinate change`() {
+            binTree.add(100, "root")
+
+            wrappedTree.addTree(binTree)
+
+            assertThrows(NodeNotFoundException::class.java) { wrappedTree.setCoordinate(150, 10.0, -10.0) }
+        }
+
+    }
     /**
      * Сравнивает переданные ноды по всем параметрам (рекурсивно обходит детей)
      * @return True - ноды полностью совпадают
