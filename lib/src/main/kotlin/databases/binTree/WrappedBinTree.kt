@@ -9,18 +9,20 @@ data class Node<NodeType>(val binNode: NodeType, val x: Double, val y: Double)
 
 class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
 
-    // Добавление бинарного деерва
-    init {
-        addNode(tree.root)
-    }
-
     // Список с расширенными нодами
     private var wrappedNodesList: MutableList<WrappedBinNode<K, V>> = mutableListOf()
 
+    // Добавление бинарного дерева
+    init {
+
+        if (tree.root != null)
+            addNode(tree.root ?: throw NullNodeException())
+    }
+
     /**
-     * Позволяет получить бинарное дерево
+     * Позволяет получить сохранённое в классе бинарное дерево
      */
-    val binaryTree: BinaryTree<K,V>
+    val binaryTree: BinaryTree<K, V>
         get() {
             val resBinTree = BinaryTree<K, V>()
             for (item in wrappedNodesList)
@@ -50,9 +52,7 @@ class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
         throw NodeNotFoundException()
     }
 
-    private fun addNode(node: BinaryNode<K, V>?) {
-        if (node == null)
-            return
+    private fun addNode(node: BinaryNode<K, V>) {
         this.wrappedNodesList.add(WrappedBinNode(node.key, node.value))
         if (node.left != null)
             addNode(node.left ?: throw NullNodeException())

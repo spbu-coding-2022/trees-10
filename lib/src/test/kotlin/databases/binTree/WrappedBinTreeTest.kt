@@ -19,7 +19,6 @@ class WrappedBinTreeTest {
     @BeforeTest
     fun init() {
         binTree = BinaryTree()
-        wrappedTree = WrappedBinTree()
     }
 
     @Nested
@@ -28,9 +27,9 @@ class WrappedBinTreeTest {
         @DisplayName("Existing elements search")
         fun `Root equivalence check`() {
             binTree.add(100, "root")
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
+            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
         }
 
         @Test
@@ -42,9 +41,9 @@ class WrappedBinTreeTest {
             binTree.add(140, "c")
             binTree.add(125, "d")
             binTree.add(160, "e")
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
+            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
         }
 
         @Test
@@ -58,9 +57,9 @@ class WrappedBinTreeTest {
             binTree.add(-100)
             binTree.add(89)
 
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
+            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
         }
 
         @Test
@@ -71,19 +70,18 @@ class WrappedBinTreeTest {
             for (item in list)
                 binTree.add(item)
 
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
+            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
 
         }
 
         @Test
         @DisplayName("Null-root tree equivalence check")
         fun `Null-root tree equivalence check`() {
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
-
+            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
         }
     }
 
@@ -94,7 +92,7 @@ class WrappedBinTreeTest {
         fun `Coordinate change check`() {
             binTree.add(100, "root")
 
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
             wrappedTree.setCoordinate(100, 10.0, -10.0)
 
             assertAll("elements",
@@ -108,7 +106,7 @@ class WrappedBinTreeTest {
         fun `Non-existent coordinate change`() {
             binTree.add(100, "root")
 
-            wrappedTree.addTree(binTree)
+            wrappedTree = WrappedBinTree(binTree)
 
             assertThrows(NodeNotFoundException::class.java) { wrappedTree.setCoordinate(150, 10.0, -10.0) }
         }
