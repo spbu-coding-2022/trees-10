@@ -1,7 +1,7 @@
 name: Gradle Build&Test
 on:
   push:
-    branches-gnore:
+    branches-ignore:
       - main
   pull_request:
     branches:
