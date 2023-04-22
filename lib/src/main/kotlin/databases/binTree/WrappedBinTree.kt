@@ -4,14 +4,13 @@ import exceptions.NodeNotFoundException
 import exceptions.NullNodeException
 import nodes.BinaryNode
 import trees.BinaryTree
-class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
+class WrappedBinTree<K : Comparable<K>, V>() {
 
     // Список с расширенными нодами
     private var wrappedNodesList: MutableList<WrappedBinNode<K, V>> = mutableListOf()
 
     // Добавление бинарного дерева
-    init {
-
+    constructor(tree : BinaryTree<K, V>) : this() {
         if (tree.root != null)
             addNode(tree.root ?: throw NullNodeException())
     }
@@ -19,8 +18,7 @@ class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
     /**
      * Позволяет получить сохранённое в классе бинарное дерево
      */
-    val binaryTree: BinaryTree<K, V>
-        get() {
+    fun getBinaryTree(): BinaryTree<K, V> {
             val resBinTree = BinaryTree<K, V>()
             for (item in wrappedNodesList)
                 resBinTree.add(item.key, item.value)
@@ -40,14 +38,7 @@ class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
         throw NodeNotFoundException()
     }
 
-    fun getWrappedNode(key: K): WrappedBinNode<K, V> {
-        for (item in wrappedNodesList)
-            if (item.key == key)
-                return item
-
-        // Если ключ не совпадает ни с одной вершиной из имеющихся
-        throw NodeNotFoundException()
-    }
+    fun getWrappedNodesArray(key: K): Array<WrappedBinNode<K, V>> = wrappedNodesList.toTypedArray()
 
     private fun addNode(node: BinaryNode<K, V>) {
         this.wrappedNodesList.add(WrappedBinNode(node.key, node.value))
