@@ -11,17 +11,14 @@ class WrappedBinTree<K : Comparable<K>, V>() {
 
     private var wrappedNodesList : MutableList<WrappedBinNode<K, V>> = mutableListOf()
 
-    var tree : BinaryTree<K, V>
-        get() = getTree()
-        set(value) = addTree(value)
-    private fun addTree(tree: BinaryTree<K, V>) {
+    fun addTree(tree: BinaryTree<K, V>) {
         if (tree.root == null)
             return
 
         addNode(tree.root ?: throw NullNodeException())
     }
 
-    private fun getTree() : BinaryTree<K, V> {
+    fun getTree() : BinaryTree<K, V> {
         val resBinTree = BinaryTree<K, V>()
         for (item in wrappedNodesList)
             resBinTree.add(item.key, item.value)
