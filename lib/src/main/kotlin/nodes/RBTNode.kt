@@ -1,4 +1,6 @@
-package nodes
+package RBnode
+
+import nodes.AbstractNode
 
 class RBNode<K : Comparable<K>, V>(override var key: K, override var value: V?) :
     AbstractNode<K, V, RBNode<K, V>>() {

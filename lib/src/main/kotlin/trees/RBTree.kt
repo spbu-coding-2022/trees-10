@@ -1,7 +1,7 @@
 package trees
 
-import nodes.Color
-import nodes.RBNode
+import RBnode.Color
+import RBnode.RBNode
 import database.RBT.RBTreeSerializer
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
