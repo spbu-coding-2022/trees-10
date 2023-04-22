@@ -32,17 +32,24 @@ class WrappedBinTree<K : Comparable<K>, V>() {
     fun add(key: K, value: V?) {
         val newTree = getBinaryTree()
         newTree.add(key, value)
+
         wrappedNodesList.clear()
 
         newTree.root?.let { addNodeToWrappedList(it) }
     }
-
     fun add(node: BinaryNode<K, V>) = add(node.key, node.value)
     fun add(node: WrappedBinNode<K, V>) {
         add(node.key, node.value)
         setCoordinate(node.key, node.x, node.y)
     }
+    fun remove(key: K) {
+        val newTree = getBinaryTree()
+        newTree.remove(key)
 
+        wrappedNodesList.clear()
+
+        newTree.root?.let { addNodeToWrappedList(it) }
+    }
     fun getWrappedNodesArray(key: K): Array<WrappedBinNode<K, V>> = wrappedNodesList.toTypedArray()
 
     fun setCoordinate(key: K, x: Double, y: Double) {
