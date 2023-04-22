@@ -76,6 +76,15 @@ class WrappedBinTreeTest {
             assertTrue(binTree.equalCheck(wrappedTree.getTree()))
 
         }
+
+        @Test
+        @DisplayName("Null-root tree equivalence check")
+        fun `Null-root tree equivalence check`() {
+            wrappedTree.addTree(binTree)
+
+            assertTrue(binTree.equalCheck(wrappedTree.getTree()))
+
+        }
     }
 
     @Nested
