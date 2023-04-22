@@ -1,9 +1,2 @@
 package databases.binTree
-
-import nodes.AbstractNode
-import nodes.BinaryNode
-
-class WrappedBinNode<K : Comparable<K>, V>(key: K, value: V?, var x: Double = 0.0, var y: Double = 0.0) :
-    AbstractNode<K, V, WrappedBinNode<K, V>>(key, value) {
-
-}
+data class WrappedBinNode<K : Comparable<K>, V>(var key: K, var value: V?, var x: Double = 0.0, var y: Double = 0.0)
