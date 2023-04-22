@@ -1,20 +1,25 @@
-package databases
+package databases.binTree
 
 import nodes.BinaryNode
+import trees.BinaryTree
 import java.io.Closeable
 import java.sql.DriverManager
 import java.sql.SQLException
 
 data class Node<NodeType>(val binNode: NodeType, val x: Int, val y : Int)
-class BinaryBase (path: String): Closeable {
+class BinaryBase (dbPath: String): Closeable {
 
-    private val connection = DriverManager.getConnection("jdbc:sqlite:$path")
+    private val connection = DriverManager.getConnection("jdbc:sqlite:$dbPath")
         ?: throw SQLException("Cannot connect to database")
     private val createBaseStatement by lazy {connection.prepareStatement("CREATE TABLE if not exists BinaryNodes (x int, y int, key int, value varchar(255));")}
     private val addNodeStatement by lazy { connection.prepareStatement("INSERT INTO BinaryNodes (x, y, key, value) VALUES (?, ?, ?, ?);") }
     private val getNodeByKey by lazy { connection.prepareStatement("SELECT x, y, value FROM BinaryNodes WHERE BinaryNodes.key = ?;") }
     private val removeNodeByKey by lazy { connection.prepareStatement("DELETE FROM BinaryNodes WHERE key=?;") }
     fun open() = createBaseStatement.execute()
+
+    fun saveBinaryTree(tree: BinaryTree<Int, String>) {
+//        if (tree.root)ы
+    }
 
     fun removeNode(key : Int) {
         removeNodeByKey.setInt(1, key)
