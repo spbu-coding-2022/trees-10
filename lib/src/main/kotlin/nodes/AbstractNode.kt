@@ -4,6 +4,7 @@ abstract class AbstractNode<K : Comparable<K>, V, node : AbstractNode<K, V, node
     Comparable<AbstractNode<K, V, node>> {
     var key: K = key
         protected set
+
     var value: V? = value
         protected set
 
