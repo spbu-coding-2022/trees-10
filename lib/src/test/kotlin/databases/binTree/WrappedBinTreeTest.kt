@@ -29,7 +29,7 @@ class WrappedBinTreeTest {
             binTree.add(100, "root")
             wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
         }
 
         @Test
@@ -43,7 +43,7 @@ class WrappedBinTreeTest {
             binTree.add(160, "e")
             wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
         }
 
         @Test
@@ -59,7 +59,7 @@ class WrappedBinTreeTest {
 
             wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
         }
 
         @Test
@@ -72,7 +72,7 @@ class WrappedBinTreeTest {
 
             wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
 
         }
 
@@ -81,7 +81,7 @@ class WrappedBinTreeTest {
         fun `Null-root tree equivalence check`() {
             wrappedTree = WrappedBinTree(binTree)
 
-            assertTrue(binTree.equalCheck(wrappedTree.binaryTree))
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
         }
     }
 
@@ -96,8 +96,8 @@ class WrappedBinTreeTest {
             wrappedTree.setCoordinate(100, 10.0, -10.0)
 
             assertAll("elements",
-                Executable { assertTrue(wrappedTree.getWrappedNode(100).x == 10.0)},
-                Executable { assertTrue(wrappedTree.getWrappedNode(100).y == -10.0)}
+                Executable { assertTrue(wrappedTree.search(100).x == 10.0)},
+                Executable { assertTrue(wrappedTree.search(100).y == -10.0)}
             )
         }
 
@@ -112,6 +112,93 @@ class WrappedBinTreeTest {
         }
 
     }
+
+    @Nested
+    inner class `Add test` {
+        @Test
+        @DisplayName("One element add test")
+        fun `One element add test`() {
+            wrappedTree = WrappedBinTree()
+
+            binTree.add(100)
+            wrappedTree.add(100)
+
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
+        }
+
+        @Test
+        @DisplayName("Random tree add check")
+        fun `Random tree add check`() {
+            wrappedTree = WrappedBinTree()
+
+            val list: List<Int> = (List(100) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+
+            for (item in list) {
+                wrappedTree.add(item)
+                binTree.add(item)
+            }
+
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
+        }
+    }
+
+    @Nested
+    inner class `Remove test` {
+        @Test
+        @DisplayName("One element add test")
+        fun `One element remove test`() {
+            binTree.add(100)
+            wrappedTree = WrappedBinTree(binTree)
+            binTree.remove(100)
+            wrappedTree.remove(100)
+
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
+        }
+
+        @Test
+        @DisplayName("Random tree add check")
+        fun `Random tree remove check`() {
+            binTree.add(100)
+            binTree.add(200)
+            binTree.add(150)
+            binTree.add(10)
+            binTree.add(220)
+            binTree.add(-100)
+            binTree.add(89)
+            binTree.add(-50)
+            binTree.add(-34)
+
+            wrappedTree = WrappedBinTree(binTree)
+
+            wrappedTree.remove(100)
+            binTree.remove(100)
+
+            assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
+        }
+    }
+
+    @Nested
+    inner class `Search test` {
+        @Test
+        @DisplayName("Existent element search")
+        fun `Existent element search`() {
+            binTree.add(100)
+
+            wrappedTree = WrappedBinTree(binTree)
+            wrappedTree.setCoordinate(100, 10.0)
+
+            assertEquals(10.0, wrappedTree.search(100).x)
+        }
+
+        @Test
+        @DisplayName("Non-existent element search")
+        fun `Non-existent element search`() {
+            wrappedTree = WrappedBinTree()
+
+            assertThrows(NodeNotFoundException::class.java){ wrappedTree.search(100).x}
+        }
+    }
+
     /**
      * Сравнивает переданные ноды по всем параметрам (рекурсивно обходит детей)
      * @return True - ноды полностью совпадают
