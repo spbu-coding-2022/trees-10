@@ -4,9 +4,6 @@ import exceptions.NodeNotFoundException
 import exceptions.NullNodeException
 import nodes.BinaryNode
 import trees.BinaryTree
-
-data class Node<NodeType>(val binNode: NodeType, val x: Double, val y: Double)
-
 class WrappedBinTree<K : Comparable<K>, V>(tree: BinaryTree<K, V>) {
 
     // Список с расширенными нодами
