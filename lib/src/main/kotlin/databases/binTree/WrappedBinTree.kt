@@ -40,7 +40,7 @@ class WrappedBinTree<K : Comparable<K>, V>() {
     fun add(node: BinaryNode<K, V>) = add(node.key, node.value)
     fun add(node: WrappedBinNode<K, V>) {
         add(node.key, node.value)
-        setCoordinate(node.key, node.x, node.y)
+        setNodeCoordinate(node.key, node.x, node.y)
     }
     fun remove(key: K) {
         val newTree = getBinaryTree()
@@ -56,9 +56,9 @@ class WrappedBinTree<K : Comparable<K>, V>() {
                 return item
         throw NodeNotFoundException()
     }
-    fun getWrappedNodesArray(key: K): Array<WrappedBinNode<K, V>> = wrappedNodesList.toTypedArray()
+    fun getWrappedNodesArray(): Array<WrappedBinNode<K, V>> = wrappedNodesList.toTypedArray()
 
-    fun setCoordinate(key: K, x: Double = 0.0, y: Double = 0.0) {
+    fun setNodeCoordinate(key: K, x: Double = 0.0, y: Double = 0.0) {
         for (item in wrappedNodesList) {
             if (item.key == key) {
                 item.x = x

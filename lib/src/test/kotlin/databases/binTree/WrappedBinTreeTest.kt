@@ -94,7 +94,7 @@ class WrappedBinTreeTest {
             binTree.add(100, "root")
 
             wrappedTree = WrappedBinTree(binTree)
-            wrappedTree.setCoordinate(100, 10.0, -10.0)
+            wrappedTree.setNodeCoordinate(100, 10.0, -10.0)
 
             assertAll("elements",
                 Executable { assertTrue(wrappedTree.search(100).x == 10.0)},
@@ -109,7 +109,7 @@ class WrappedBinTreeTest {
 
             wrappedTree = WrappedBinTree(binTree)
 
-            assertThrows(NodeNotFoundException::class.java) { wrappedTree.setCoordinate(150, 10.0, -10.0) }
+            assertThrows(NodeNotFoundException::class.java) { wrappedTree.setNodeCoordinate(150, 10.0, -10.0) }
         }
 
     }
@@ -203,7 +203,7 @@ class WrappedBinTreeTest {
             binTree.add(100)
 
             wrappedTree = WrappedBinTree(binTree)
-            wrappedTree.setCoordinate(100, 10.0)
+            wrappedTree.setNodeCoordinate(100, 10.0)
 
             assertEquals(10.0, wrappedTree.search(100).x)
         }

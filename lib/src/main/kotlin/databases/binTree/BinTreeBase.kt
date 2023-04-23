@@ -14,11 +14,17 @@ class BinaryBase (dbPath: String): Closeable {
     private val getNodeByKey by lazy { connection.prepareStatement("SELECT x, y, value FROM BinaryNodes WHERE BinaryNodes.key = ?;") }
     private val removeNodeByKey by lazy { connection.prepareStatement("DELETE FROM BinaryNodes WHERE key=?;") }
     fun open() = createBaseStatement.execute()
+
+    fun saveTree(tree: WrappedBinTree<Int, String>) {
+        for (node in tree.getWrappedNodesArray())
+            addNode(node)
+    }
+    fun saveTree(tree: BinaryTree<Int, String>) = saveTree(WrappedBinTree(tree))
     fun removeNode(key : Int) {
         removeNodeByKey.setInt(1, key)
         removeNodeByKey.execute()
     }
-    fun addNode(node : WrappedBinNode<Int, String>) {
+    private fun addNode(node : WrappedBinNode<Int, String>) {
         if (search(node.key) != null)
             return
 
@@ -36,6 +42,12 @@ class BinaryBase (dbPath: String): Closeable {
             return null
 
         return WrappedBinNode(key, res.getString("value"), res.getDouble("x"), res.getDouble("y"))
+    }
+    constructor(dbPath: String, tree: WrappedBinTree<Int, String>) : this(dbPath) {
+        saveTree(tree)
+    }
+    constructor(dbPath: String, tree: BinaryTree<Int, String>) : this(dbPath) {
+        saveTree(tree)
     }
     override fun close() {
         createBaseStatement.close()
