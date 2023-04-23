@@ -29,18 +29,16 @@ class WrappedBinTree<K : Comparable<K>, V>() {
     /**
      * Позволяет добавить новую ноду в дерево
      */
-    fun add(key: K, value: V? = null) {
+    fun add(key: K, value: V? = null, x: Double = 0.0, y: Double = 0.0) {
         val newTree = getBinaryTree()
         newTree.add(key, value)
 
         wrappedNodesList.clear()
 
-        newTree.root?.let { addNodeToWrappedList(it) }
-    }
-    fun add(node: BinaryNode<K, V>) = add(node.key, node.value)
-    fun add(node: WrappedBinNode<K, V>) {
-        add(node.key, node.value)
-        setNodeCoordinate(node.key, node.x, node.y)
+        newTree.root?.let {
+            addNodeToWrappedList(it)
+            setNodeCoordinate(key, x, y)
+        }
     }
     fun remove(key: K) {
         val newTree = getBinaryTree()
