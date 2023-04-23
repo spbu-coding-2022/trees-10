@@ -1,5 +1,6 @@
 package databases.binTree
 
+import exceptions.NodeAlreadyExistsException
 import exceptions.NodeNotFoundException
 import org.junit.jupiter.api.Assertions.*
 import trees.BinaryTree
@@ -127,6 +128,15 @@ class WrappedBinTreeTest {
         }
 
         @Test
+        @DisplayName("One element add test")
+        fun `Already existent element add test`() {
+            wrappedTree = WrappedBinTree()
+            wrappedTree.add(100, "root")
+
+            assertThrows(NodeAlreadyExistsException::class.java) { wrappedTree.add(100, "root") }
+        }
+
+        @Test
         @DisplayName("Random tree add check")
         fun `Random tree add check`() {
             wrappedTree = WrappedBinTree()
@@ -153,6 +163,14 @@ class WrappedBinTreeTest {
             wrappedTree.remove(100)
 
             assertTrue(binTree.equalCheck(wrappedTree.getBinaryTree()))
+        }
+
+        @Test
+        @DisplayName("Non-existent element remove test")
+        fun `Non-existent element remove test`() {
+            wrappedTree = WrappedBinTree()
+
+            assertThrows(NodeNotFoundException::class.java) {wrappedTree.remove(100)}
         }
 
         @Test
