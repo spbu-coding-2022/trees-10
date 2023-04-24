@@ -1,5 +1,6 @@
 package trees
 
+import exceptions.NodeAlreadyExistsException
 import nodes.AVLNode
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -11,27 +12,6 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 class AVLTreeTest {
-    private fun getBalance(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return getHeight(node.left) - getHeight(node.right)
-    }
-
-    private fun getHeight(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return node.height
-    }
-    
-    fun invariantCheck(node: AVLNode<Int, String>?): Boolean {
-        if (node == null) {
-            return true
-        }
-        return abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
-    }
-
     @Nested
     inner class `Remove check` {
         @Test
@@ -42,6 +22,12 @@ class AVLTreeTest {
             tree.remove(100)
             assertEquals(null, tree.search(100)?.value)
         }
+        @Test
+        @DisplayName("Non-existence element remove check")
+        fun `Non-existence element remove check`() {
+            assertThrows(NodeAlreadyExistsException::class.java) { tree.remove() }
+        }
+
         @Test
         @DisplayName("Simple element remove")
         fun `Simple element remove`() {
@@ -98,6 +84,7 @@ class AVLTreeTest {
             )
         }
     }
+
     @Nested
     inner class `Add check` {
         @Test
@@ -107,7 +94,6 @@ class AVLTreeTest {
             tree.add(30, "root")
             assertEquals("root", tree.search(30)?.value)
         }
-
         @Test
         @DisplayName("Left rotation on add")
         fun `Left rotation on add`() {
@@ -141,5 +127,27 @@ class AVLTreeTest {
                 assertEquals(tree.search(list.last())?.value, 0)
             }
         }
+
+    }
+
+    private fun getBalance(node: AVLNode<Int, String>?): Int {
+        if (node == null) {
+            return 0
+        }
+        return getHeight(node.left) - getHeight(node.right)
+    }
+
+    private fun getHeight(node: AVLNode<Int, String>?): Int {
+        if (node == null) {
+            return 0
+        }
+        return node.height
+    }
+
+    fun invariantCheck(node: AVLNode<Int, String>?): Boolean {
+        if (node == null) {
+            return true
+        }
+        return abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
     }
 }
