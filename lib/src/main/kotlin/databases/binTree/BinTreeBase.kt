@@ -28,13 +28,11 @@ class BinTreeBase<V>(
     }
 
     fun saveTree(tree: WrappedBinTree<Int, V>) {
+        clear()
         for (node in tree.getWrappedNodesArray())
             addNode(node)
     }
 
-    fun clear() {
-        dropDatabaseStatement.execute()
-    }
     fun getWrappedBinTree(): WrappedBinTree<Int, V> {
         val tree = WrappedBinTree<Int, V>()
 
@@ -51,7 +49,6 @@ class BinTreeBase<V>(
 
         return tree
     }
-
     private fun addNode(node: WrappedBinNode<Int, V>) {
 
         addNodeStatement.setInt(1, node.key)
@@ -62,9 +59,15 @@ class BinTreeBase<V>(
         addNodeStatement.execute()
     }
 
+    private fun clear() {
+        dropDatabaseStatement.execute()
+    }
+
     override fun close() {
         createBaseStatement.close()
         addNodeStatement.close()
+        getNodesStatement.close()
+        dropDatabaseStatement.close()
 
         connection.close()
     }
