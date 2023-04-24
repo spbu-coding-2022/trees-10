@@ -53,26 +53,55 @@ class RBTreeTest {
         }
 
         @Test
-        @DisplayName("Small tree create test")
-        fun `Small tree create test`() {
-            tree.add(100)
-            tree.add(150)
-            tree.add(10)
-            tree.add(0)
+        @DisplayName("Add one element to root")
+        fun `Add one element to root`() {
+            tree.add(1)
+            tree.add(2)
 
             assertTrue(tree.rulesCheck())
         }
 
         @Test
-        @DisplayName("Add to different subtrees")
-        fun `Add to different subtrees`() {
-            tree.add(100, "root")
-            tree.add(150)
-            tree.add(125)
-            tree.add(200)
-            tree.add(50)
-            tree.add(25)
-            tree.add(60)
+        @DisplayName("Balance with three elements check")
+        fun `Balance with three elements check`() {
+            tree.add(1)
+            tree.add(2)
+            tree.add(3)
+
+            assertTrue(tree.rulesCheck())
+        }
+        @Test
+        @DisplayName("Balance and repaint simple check")
+        fun `Balance and repaint simple check`() {
+            tree.add(2)
+            tree.add(1)
+            tree.add(3)
+            tree.add(4)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Complex rotate check")
+        fun `Complex rotate check`() {
+            tree.add(2)
+            tree.add(3)
+            tree.add(4)
+            tree.add(5)
+            tree.add(1)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Complex rotate and repaint check")
+        fun `Complex rotate and repaint check`() {
+            tree.add(2)
+            tree.add(1)
+            tree.add(4)
+            tree.add(3)
+            tree.add(5)
+            tree.add(6)
 
             assertTrue(tree.rulesCheck())
         }
@@ -90,7 +119,7 @@ class RBTreeTest {
 
         @Test
         @DisplayName("Add elements existence check")
-        fun `Add elements existence check`() {
+        fun `New elements existence check`() {
             tree.add(100, "root")
             tree.add(150)
             tree.add(125)
@@ -117,23 +146,41 @@ class RBTreeTest {
 
             assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
-
-        @Test
-        @DisplayName("Equal keys add")
-        fun `Equal keys add`() {
-            tree.add(100)
-
-            assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
-        }
     }
 
     @Nested
     inner class `Remove check` {
         @Test
         fun `Root element del`() {
-            tree.add(100)
+            tree.add(100, "root")
 
+            tree.remove(100)
 
+            assertFalse(tree.nodeExists(100, "root"))
+        }
+
+        @Test
+        fun `Node with no children del`() {
+            tree.add(100, "a")
+            tree.add(120, "b")
+
+            tree.remove(120)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        fun `Node with one children del`() {
+            tree.add(100, "a")
+            tree.add(120, "b")
+
+            tree.remove(100)
+
+            assertTrue(tree.rulesCheck())
+        }
+        @Test
+        fun `Non-existent element del`() {
+            assertThrows(NodeNotFoundException::class.java ){ tree.remove(100) }
         }
     }
 
