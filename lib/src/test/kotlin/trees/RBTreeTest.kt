@@ -2,17 +2,14 @@ import exceptions.NodeAlreadyExistsException
 import exceptions.NodeNotFoundException
 import exceptions.NullNodeException
 import exceptions.TreeException
-import nodes.BinaryNode
 import nodes.Color
 import nodes.RBNode
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import trees.RBTree
-import java.time.Duration.ofMillis
 import kotlin.random.Random
 import kotlin.test.BeforeTest
 
@@ -81,6 +78,39 @@ class RBTreeTest {
         }
 
         @Test
+        @DisplayName("Random elements add")
+        fun `Random elements add`() {
+            val list: List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+
+            for (item in list)
+                tree.add(item, "a")
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Add elements existence check")
+        fun `Add elements existence check`() {
+            tree.add(100, "root")
+            tree.add(150)
+            tree.add(125)
+            tree.add(200)
+            tree.add(50)
+            tree.add(25)
+            tree.add(60)
+
+            assertAll(
+                Executable { assertTrue(tree.nodeExists(100, "root")) },
+                Executable { assertTrue(tree.nodeExists(150, null)) },
+                Executable { assertTrue(tree.nodeExists(125, null)) },
+                Executable { assertTrue(tree.nodeExists(200, null)) },
+                Executable { assertTrue(tree.nodeExists(50, null)) },
+                Executable { assertTrue(tree.nodeExists(25, null)) },
+                Executable { assertTrue(tree.nodeExists(60, null)) }
+            )
+        }
+
+        @Test
         @DisplayName("Equal keys add")
         fun `Equals keys add`() {
             tree.add(100)
@@ -96,6 +126,39 @@ class RBTreeTest {
             assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
     }
+
+    @Nested
+    inner class `Remove check` {
+        @Test
+        fun `Root element del`() {
+            tree.add(100)
+
+
+        }
+    }
+
+    /***
+     * Проверяет ноду на существование
+     * @return True - найден узел с совпадающим ключом и значением
+     */
+    private fun <K : Comparable<K>, V> RBTree<K, V>.nodeExists(key: K, value: V?): Boolean {
+        if (this.root == null)
+            return false
+        val searchRes = this.root?.recursiveSearch(key)
+        return searchRes != null && searchRes.value == value
+    }
+
+    /**
+     * Выполняет рекурсивный поиск ноды
+     * (нужна чтобы тесты не опирались на ф-ию поиска класса BinaryNode)
+     */
+    private fun <K : Comparable<K>, V> RBNode<K, V>.recursiveSearch(key: K): RBNode<K, V>? =
+        when (key.compareTo(this.key)) {
+            1 -> this.right?.recursiveSearch(key)
+            0 -> this
+            -1 -> this.left?.recursiveSearch(key)
+            else -> null
+        }
 
     /**
      * Проверка дерева на соответствие правилам красно-чёрных деревьев
