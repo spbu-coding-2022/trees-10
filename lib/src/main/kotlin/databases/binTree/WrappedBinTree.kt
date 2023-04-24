@@ -48,14 +48,13 @@ class WrappedBinTree<K : Comparable<K>, V>() {
 
         newTree.root?.let { addNodeToWrappedList(it) }
     }
-    fun search(key: K): WrappedBinNode<K, V> {
+    fun getWrappedNode(key: K): WrappedBinNode<K, V> {
         for (item in wrappedNodesList)
             if (item.key == key)
                 return item
         throw NodeNotFoundException()
     }
     fun getWrappedNodesArray(): Array<WrappedBinNode<K, V>> = wrappedNodesList.toTypedArray()
-
     fun setNodeCoordinate(key: K, x: Double = 0.0, y: Double = 0.0) {
         for (item in wrappedNodesList) {
             if (item.key == key) {

@@ -97,8 +97,8 @@ class WrappedBinTreeTest {
             wrappedTree.setNodeCoordinate(100, 10.0, -10.0)
 
             assertAll("elements",
-                Executable { assertTrue(wrappedTree.search(100).x == 10.0)},
-                Executable { assertTrue(wrappedTree.search(100).y == -10.0)}
+                Executable { assertTrue(wrappedTree.getWrappedNode(100).x == 10.0)},
+                Executable { assertTrue(wrappedTree.getWrappedNode(100).y == -10.0)}
             )
         }
 
@@ -205,7 +205,7 @@ class WrappedBinTreeTest {
             wrappedTree = WrappedBinTree(binTree)
             wrappedTree.setNodeCoordinate(100, 10.0)
 
-            assertEquals(10.0, wrappedTree.search(100).x)
+            assertEquals(10.0, wrappedTree.getWrappedNode(100).x)
         }
 
         @Test
@@ -213,7 +213,7 @@ class WrappedBinTreeTest {
         fun `Non-existent element search`() {
             wrappedTree = WrappedBinTree()
 
-            assertThrows(NodeNotFoundException::class.java){ wrappedTree.search(100).x}
+            assertThrows(NodeNotFoundException::class.java){ wrappedTree.getWrappedNode(100).x}
         }
     }
 
