@@ -1,6 +1,7 @@
 package trees
 
 import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
 import nodes.AVLNode
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
@@ -33,7 +34,7 @@ class AVLTreeTest {
         @Test
         @DisplayName("Non-existence element remove check")
         fun `Non-existence element remove check`() {
-            assertThrows(NodeAlreadyExistsException::class.java) { tree.remove() }
+            assertThrows(NodeNotFoundException::class.java) { tree.remove(100) }
         }
 
         @Test
@@ -97,6 +98,14 @@ class AVLTreeTest {
         fun `Simple add`() {
             tree.add(30, "root")
             assertEquals("root", tree.search(30)?.value)
+        }
+
+        @Test
+        @DisplayName("Non-existence element remove check")
+        fun `Non-existence element remove check`() {
+            tree.add(100)
+
+            assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
         @Test
         @DisplayName("Left rotation on add")
