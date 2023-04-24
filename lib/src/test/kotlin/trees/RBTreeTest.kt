@@ -18,12 +18,13 @@ import kotlin.test.BeforeTest
 
 class RBTreeTest {
 
-    private lateinit var tree : RBTree<Int, String>
+    private lateinit var tree: RBTree<Int, String>
+
     @BeforeTest
     fun init() {
         tree = RBTree()
     }
-    
+
     @Nested
     inner class `Search check` {
         @Test
@@ -46,7 +47,54 @@ class RBTreeTest {
 
     @Nested
     inner class `Add check` {
+        @Test
+        @DisplayName("Root element add")
+        fun `Root element add`() {
+            tree.add(100)
 
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Small tree create test")
+        fun `Small tree create test`() {
+            tree.add(100)
+            tree.add(150)
+            tree.add(10)
+            tree.add(0)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Add to different subtrees")
+        fun `Add to different subtrees`() {
+            tree.add(100, "root")
+            tree.add(150)
+            tree.add(125)
+            tree.add(200)
+            tree.add(50)
+            tree.add(25)
+            tree.add(60)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Equal keys add")
+        fun `Equals keys add`() {
+            tree.add(100)
+
+            assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
+        }
+
+        @Test
+        @DisplayName("Equal keys add")
+        fun `Equal keys add`() {
+            tree.add(100)
+
+            assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
+        }
     }
 
     /**
@@ -107,7 +155,7 @@ class RBTreeTest {
 
         // Теперь смотрим, выполняется ли условие
         if (leftCount != rightCount)
-            throw TreeException("У RBTree не может быть разного количества чёрных узлов у поддеревьев")
+            throw TreeException("Узел [${this.key}, ${this.value}] содержит разное кол-во чёрных узлов в левом [$leftCount] и правом [$rightCount] поддереве")
 
         mCount += leftCount + rightCount
 
