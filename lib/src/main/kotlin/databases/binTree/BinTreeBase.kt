@@ -6,7 +6,7 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 
-class BinaryBase <V>(
+class BinTreeBase <V>(
     dbPath: String,
     private val serializeValue: (value: V?) -> String,
     private val deserializeValue: (strValue: String) -> V
@@ -17,7 +17,9 @@ class BinaryBase <V>(
     private val createBaseStatement by lazy { connection.prepareStatement("CREATE TABLE if not exists BinaryNodes (key int, value varchar(255), x double, y double);") }
     private val addNodeStatement by lazy { connection.prepareStatement("INSERT INTO BinaryNodes (key, value, x, y) VALUES (?, ?, ?, ?);") }
     private val getNodesStatement by lazy { connection.prepareStatement("SELECT key, value, x, y, value FROM BinaryNodes") }
-    fun open() = createBaseStatement.execute()
+    init {
+        createBaseStatement.execute()
+    }
     fun saveTree(tree: WrappedBinTree<Int, V>) {
         for (node in tree.getWrappedNodesArray())
             addNode(node)
