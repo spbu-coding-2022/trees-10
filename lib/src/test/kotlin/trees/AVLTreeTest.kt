@@ -10,14 +10,22 @@ import org.junit.jupiter.api.function.Executable
 import java.time.Duration.ofMillis
 import kotlin.math.abs
 import kotlin.random.Random
+import kotlin.test.BeforeTest
 
 class AVLTreeTest {
+
+    private lateinit var tree: AVLTree<Int, String>
+    @BeforeTest
+    fun init() {
+        tree = AVLTree()
+    }
+
+
     @Nested
     inner class `Remove check` {
         @Test
         @DisplayName("Root remove")
         fun `Root remove`() {
-            val tree = AVLTree<Int, String>()
             tree.add(100, "root")
             tree.remove(100)
             assertEquals(null, tree.search(100)?.value)
@@ -31,7 +39,6 @@ class AVLTreeTest {
         @Test
         @DisplayName("Simple element remove")
         fun `Simple element remove`() {
-            val tree = AVLTree<Int, String>()
             tree.add(8, "root")
             tree.add(10, "a")
             tree.add(14, "b")
@@ -48,7 +55,6 @@ class AVLTreeTest {
         @Test
         @DisplayName("Element with one child node remove")
         fun `Element with one child node remove`() {
-            val tree = AVLTree<Int, String>()
             tree.add(8, "root")
             tree.add(10, "a")
             tree.add(14)
@@ -65,7 +71,6 @@ class AVLTreeTest {
         @Test
         @DisplayName("Element with two child nodes remove")
         fun `Element with two child nodes remove`() {
-            val tree = AVLTree<Int, String>()
             tree.add(8, "root")
             tree.add(4, "a")
             tree.add(1, "b")
@@ -90,14 +95,12 @@ class AVLTreeTest {
         @Test
         @DisplayName("Simple add")
         fun `Simple add`() {
-            val tree = AVLTree<Int, String>()
             tree.add(30, "root")
             assertEquals("root", tree.search(30)?.value)
         }
         @Test
         @DisplayName("Left rotation on add")
         fun `Left rotation on add`() {
-            val tree = AVLTree<Int, String>()
             tree.add(1, "root")
             tree.add(2, "a")
             tree.add(3, "b")
@@ -108,7 +111,6 @@ class AVLTreeTest {
         @Test
         @DisplayName("Right rotation on add")
         fun `Right rotation on add`() {
-            val tree = AVLTree<Int, String>()
             tree.add(3, "root")
             tree.add(2, "a")
             tree.add(1, "b")
@@ -120,11 +122,10 @@ class AVLTreeTest {
         @DisplayName("Multiply add")
         fun `Multiply add`() {
             assertTimeout(ofMillis(1000)) {
-                val tree = AVLTree<Int, Int>()
                 val list : List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
                 for (item in list)
-                    tree.add(item, 0)
-                assertEquals(tree.search(list.last())?.value, 0)
+                    tree.add(item, "0")
+                assertEquals(tree.search(list.last())?.value, "0")
             }
         }
 
