@@ -140,6 +140,17 @@ class AVLTreeTest {
 
     }
 
+    @Nested
+    inner class `Search check` {
+        @Test
+        @DisplayName("Non-existence element search")
+        fun `Non-existence element search`() {
+            assertThrows(NodeNotFoundException::class.java) {
+                tree.search(100)
+            }
+        }
+    }
+
     private fun getBalance(node: AVLNode<Int, String>?): Int {
         if (node == null) {
             return 0
