@@ -2,11 +2,10 @@ package trees
 
 import RBnode.Color
 import RBnode.RBNode
-import database.RBT.RBTreeSerializer
+import exceptions.*
+
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
-    override var root: RBNode<K, V>? = null
-
     override fun search(key: K): RBNode<K, V>? {
         var node = root
         while (node != null) {
@@ -20,6 +19,9 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     override fun add(key: K, value: V?) {
+        if (contains(key)) {                // check if node with the same key already exists
+            throw NodeAlreadyExistsException()
+        }
         val newNode = RBNode(key, value)
         if (root == null) {                 // if there is no root, make the node - new root
             root = newNode
@@ -47,7 +49,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     override fun remove(key: K) {
-        val node = search(key) ?: return            //check if node is real
+        val node = search(key) ?: throw NodeNotFoundException()            //check if node is real
         removeNode(node)
     }
 
@@ -146,7 +148,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     if (sibling?.right?.color == Color.BLACK) {
                         sibling.left?.color = Color.BLACK
                         sibling.color = Color.RED
-                        sibling?.let { rightRotate(it) }
+                        sibling.let { rightRotate(it) }
                         sibling = currentNode.parent?.right
                     }
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
@@ -170,7 +172,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     if (sibling?.left?.color == Color.BLACK) {
                         sibling.right?.color = Color.BLACK
                         sibling.color = Color.RED
-                        sibling?.let { leftRotate(it) }
+                        sibling.let { leftRotate(it) }
                         sibling = currentNode.parent?.left
                     }
                     sibling?.color = currentNode.parent?.color ?: throw IllegalStateException("Parent color is null")
@@ -186,7 +188,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
 
 
     private fun leftRotate(node: RBNode<K, V>) {
-        val rightChild = node.right ?: throw IllegalStateException("Right child is null")
+        val rightChild = node.right ?: throw NullNodeException()
         node.right = rightChild.left
         if (rightChild.left != null) {
             rightChild.left!!.parent = node
@@ -223,24 +225,22 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
 
     private fun transplant(u: RBNode<K, V>?, v: RBNode<K, V>?) {
         if (u?.parent == null) {
-            root = v ?: throw IllegalStateException("Node v is null")
+            root = v ?: throw NullNodeException()
         } else if (u == u.parent!!.left) {
-            u.parent!!.left = v ?: throw IllegalStateException("Node v is null")
+            u.parent!!.left = v ?: throw NullNodeException()
         } else {
-            u.parent!!.right = v ?: throw IllegalStateException("Node v is null")
+            u.parent!!.right = v ?: throw NullNodeException()
         }
         v.parent = u?.parent
     }
-
-    fun saveToFile(filePath: String) {
-        val serializer = RBTreeSerializer()
-        serializer.serialize(this, filePath)
-    }
-
-    companion object {
-        fun loadFromFile(filePath: String): RBTree<*, *> {
-            val serializer = RBTreeSerializer()
-            return serializer.deserialize(filePath)
+    fun contains(key: K): Boolean {
+        var node = root
+        while (node != null) {
+            if (key == node.key) {
+                return true
+            }
+            node = if (key < node.key) node.left else node.right
         }
+        return false
     }
 }
