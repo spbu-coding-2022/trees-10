@@ -6,7 +6,7 @@ abstract class AbstractNode<K : Comparable<K>, V, node : AbstractNode<K, V, node
         protected set
 
     var value: V? = value
-        protected set
+        internal set
 
     var right: node? = null
     var left: node? = null
