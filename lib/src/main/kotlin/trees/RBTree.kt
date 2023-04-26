@@ -1,12 +1,12 @@
 package trees
 
-import RBnode.Color
-import RBnode.RBNode
+import nodes.Color
+import nodes.RBNode
 import exceptions.*
 
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
-    override fun search(key: K): RBNode<K, V>? {
+    override fun search(key: K): RBNode<K, V> {
         var node = root
         while (node != null) {
             node = when {
@@ -15,7 +15,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                 else -> return node                     //when found - return node
             }
         }
-        return null
+        throw NodeNotFoundException()
     }
 
     override fun add(key: K, value: V?) {
@@ -39,7 +39,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
         newNode.color = Color.RED
         newNode.parent = parent
 
-        if (key < (parent?.key ?: throw NullPointerException("Parent is null"))) {        //move up the tree, find  needed place
+        if (key < (parent?.key ?: throw NullNodeException())) { //move up the tree, find  needed place
             parent.left = newNode
         } else {
             parent.right = newNode
@@ -49,7 +49,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     override fun remove(key: K) {
-        val node = search(key) ?: throw NodeNotFoundException()            //check if node is real
+        val node = search(key)            //check if node is real
         removeNode(node)
     }
 

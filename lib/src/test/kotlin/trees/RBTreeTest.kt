@@ -32,7 +32,7 @@ class RBTreeTest {
             tree.add(50, "root -> left")
             tree.add(30, "root -> left -> left")
 
-            assertEquals("root -> left -> left", tree.search(30)?.value)
+            assertEquals("root -> left -> left", tree.search(30).value)
         }
 
         @Test
@@ -62,7 +62,7 @@ class RBTreeTest {
         }
 
         @Test
-        @DisplayName("Balance with three elements check")
+        @DisplayName("Balance with three elements add check")
         fun `Balance with three elements check`() {
             tree.add(1)
             tree.add(2)
@@ -71,7 +71,7 @@ class RBTreeTest {
             assertTrue(tree.rulesCheck())
         }
         @Test
-        @DisplayName("Balance and repaint simple check")
+        @DisplayName("Balance and repaint adding check")
         fun `Balance and repaint simple check`() {
             tree.add(2)
             tree.add(1)
@@ -83,19 +83,23 @@ class RBTreeTest {
 
         @Test
         @DisplayName("Complex rotate check")
-        fun `Complex rotate check`() {
+        fun `Rotate check`() {
             tree.add(2)
             tree.add(3)
             tree.add(4)
             tree.add(5)
             tree.add(1)
+            tree.add(7)
+            tree.add(6)
+            tree.add(9)
+
 
             assertTrue(tree.rulesCheck())
         }
 
         @Test
         @DisplayName("Complex rotate and repaint check")
-        fun `Complex rotate and repaint check`() {
+        fun `Rotate and repaint check`() {
             tree.add(2)
             tree.add(1)
             tree.add(4)
@@ -267,7 +271,7 @@ class RBTreeTest {
         if (leftCount != rightCount)
             throw TreeException("Узел [${this.key}, ${this.value}] содержит разное кол-во чёрных узлов в левом [$leftCount] и правом [$rightCount] поддереве")
 
-        mCount += leftCount + rightCount
+        mCount += leftCount
 
         return mCount
     }
