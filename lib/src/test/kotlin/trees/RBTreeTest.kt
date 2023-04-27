@@ -199,6 +199,7 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
         @DisplayName("Red node with black children remove test")
         fun `Red node with black children remove test`() {
@@ -244,6 +245,7 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
         @DisplayName("Non-existent element del")
         fun `Non-existent element del`() {
