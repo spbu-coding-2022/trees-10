@@ -16,6 +16,7 @@ import kotlin.test.BeforeTest
 class AVLTreeTest {
 
     private lateinit var tree: AVLTree<Int, String>
+
     @BeforeTest
     fun init() {
         tree = AVLTree()
@@ -31,6 +32,7 @@ class AVLTreeTest {
             tree.remove(100)
             assertEquals(null, tree.testSearch(100)?.value)
         }
+
         @Test
         @DisplayName("Non-existence element remove check")
         fun `Non-existence element remove check`() {
@@ -53,6 +55,7 @@ class AVLTreeTest {
                 Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
+
         @Test
         @DisplayName("Element with one child node remove")
         fun `Element with one child node remove`() {
@@ -69,6 +72,7 @@ class AVLTreeTest {
                 Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
+
         @Test
         @DisplayName("Element with two child nodes remove")
         fun `Element with two child nodes remove`() {
@@ -108,6 +112,7 @@ class AVLTreeTest {
 
             assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
+
         @Test
         @DisplayName("Left rotation on add")
         fun `Left rotation on add`() {
@@ -132,7 +137,7 @@ class AVLTreeTest {
         @DisplayName("Multiply add")
         fun `Multiply add`() {
             assertTimeout(ofMillis(1000)) {
-                val list : List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+                val list: List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
                 for (item in list)
                     tree.add(item, "0")
                 assertEquals(tree.testSearch(list.last())?.value, "0")
@@ -160,7 +165,7 @@ class AVLTreeTest {
         }
     }
 
-    private fun<K: Comparable<K>, V> AVLTree<K, V>.testSearch(key: K): AVLNode<K, V>? {
+    private fun <K : Comparable<K>, V> AVLTree<K, V>.testSearch(key: K): AVLNode<K, V>? {
         fun <K : Comparable<K>, V> AVLNode<K, V>.recursiveSearch(key: K): AVLNode<K, V>? =
             when (key.compareTo(this.key)) {
                 1 -> this.right?.recursiveSearch(key)
@@ -172,23 +177,15 @@ class AVLTreeTest {
     }
 
     private fun getBalance(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return getHeight(node.left) - getHeight(node.right)
+        return if (node == null)
+            0
+        else getHeight(node.left) - getHeight(node.right)
     }
 
-    private fun getHeight(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return node.height
-    }
-
+    private fun getHeight(node: AVLNode<Int, String>?): Int = node?.height ?: 0
     fun invariantCheck(node: AVLNode<Int, String>?): Boolean {
-        if (node == null) {
-            return true
-        }
-        return abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
+        return if (node == null)
+            true
+        else abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
     }
 }
