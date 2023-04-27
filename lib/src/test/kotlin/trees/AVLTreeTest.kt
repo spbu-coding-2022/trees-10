@@ -22,7 +22,6 @@ class AVLTreeTest {
         tree = AVLTree()
     }
 
-
     @Nested
     inner class `Remove check` {
         @Test

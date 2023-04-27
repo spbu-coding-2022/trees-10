@@ -1,12 +1,9 @@
-import exceptions.NodeAlreadyExistsException
-import exceptions.NodeNotFoundException
-import exceptions.NullNodeException
-import exceptions.TreeException
-import nodes.Color
-import nodes.RBNode
+import exceptions.*
+import nodes.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import trees.RBTree
@@ -70,6 +67,7 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
         @DisplayName("Balance and repaint adding check")
         fun `Balance and repaint simple check`() {
@@ -155,6 +153,7 @@ class RBTreeTest {
     @Nested
     inner class `Remove check` {
         @Test
+        @DisplayName("Root element del")
         fun `Root element del`() {
             tree.add(100, "root")
 
@@ -164,6 +163,7 @@ class RBTreeTest {
         }
 
         @Test
+        @DisplayName("Node with no children del")
         fun `Node with no children del`() {
             tree.add(100, "a")
             tree.add(120, "b")
@@ -174,6 +174,7 @@ class RBTreeTest {
         }
 
         @Test
+        @DisplayName("Node with one children del")
         fun `Node with one children del`() {
             tree.add(100, "a")
             tree.add(120, "b")
@@ -182,9 +183,24 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
+        @DisplayName("Random tree element del")
+        @RepeatedTest(10)
+        fun `Random tree element del`() {
+            val list: List<Int> = (List(1000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+
+            for (item in list)
+                tree.add(item, "a")
+
+            tree.remove(list.asSequence().shuffled().first())
+
+            assertTrue(tree.rulesCheck())
+        }
+        @Test
+        @DisplayName("Non-existent element del")
         fun `Non-existent element del`() {
-            assertThrows(NodeNotFoundException::class.java ){ tree.remove(100) }
+            assertThrows(NodeNotFoundException::class.java) { tree.remove(100) }
         }
     }
 
