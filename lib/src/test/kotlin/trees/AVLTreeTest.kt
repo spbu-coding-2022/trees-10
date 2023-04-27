@@ -29,7 +29,7 @@ class AVLTreeTest {
         fun `Root remove`() {
             tree.add(100, "root")
             tree.remove(100)
-            assertEquals(null, tree.search(100)?.value)
+            assertEquals(null, tree.testSearch(100)?.value)
         }
         @Test
         @DisplayName("Non-existence element remove check")
@@ -46,11 +46,11 @@ class AVLTreeTest {
             tree.add(13)
             tree.remove(13)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals("a", tree.search(10)?.value) },
-                Executable { assertEquals("b", tree.search(14)?.value) },
-                Executable { assertEquals(null, tree.search(13)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(10))) }
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals("a", tree.testSearch(10)?.value) },
+                Executable { assertEquals("b", tree.testSearch(14)?.value) },
+                Executable { assertEquals(null, tree.testSearch(13)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
         @Test
@@ -62,11 +62,11 @@ class AVLTreeTest {
             tree.add(13, "c")
             tree.remove(14)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals("a", tree.search(10)?.value) },
-                Executable { assertEquals("c", tree.search(13)?.value) },
-                Executable { assertEquals(null, tree.search(14)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(10))) }
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals("a", tree.testSearch(10)?.value) },
+                Executable { assertEquals("c", tree.testSearch(13)?.value) },
+                Executable { assertEquals(null, tree.testSearch(14)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
         @Test
@@ -77,16 +77,17 @@ class AVLTreeTest {
             tree.add(1, "b")
             tree.add(6, "c")
             tree.add(7, "d")
+            tree.add(3, "e")
 
             tree.remove(3)
             assertAll("elements",
-                Executable { assertEquals("a", tree.search(4)?.value) },
-                Executable { assertEquals("b", tree.search(1)?.value) },
-                Executable { assertEquals(null, tree.search(3)?.value) },
-                Executable { assertEquals("c", tree.search(6)?.value) },
-                Executable { assertEquals("d", tree.search(7)?.value) },
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(4))) }
+                Executable { assertEquals("a", tree.testSearch(4)?.value) },
+                Executable { assertEquals("b", tree.testSearch(1)?.value) },
+                Executable { assertEquals(null, tree.testSearch(3)?.value) },
+                Executable { assertEquals("c", tree.testSearch(6)?.value) },
+                Executable { assertEquals("d", tree.testSearch(7)?.value) },
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(4))) }
             )
         }
     }
@@ -97,7 +98,7 @@ class AVLTreeTest {
         @DisplayName("Simple add")
         fun `Simple add`() {
             tree.add(30, "root")
-            assertEquals("root", tree.search(30)?.value)
+            assertEquals("root", tree.testSearch(30)?.value)
         }
 
         @Test
@@ -113,8 +114,8 @@ class AVLTreeTest {
             tree.add(1, "root")
             tree.add(2, "a")
             tree.add(3, "b")
-            assertEquals("root", tree.search(2)?.left?.value)
-            assertEquals(true, invariantCheck(tree.search(2)))
+            assertEquals("root", tree.testSearch(2)?.left?.value)
+            assertEquals(true, invariantCheck(tree.testSearch(2)))
         }
 
         @Test
@@ -123,8 +124,8 @@ class AVLTreeTest {
             tree.add(3, "root")
             tree.add(2, "a")
             tree.add(1, "b")
-            assertEquals("root", tree.search(2)?.right?.value)
-            assertEquals(true, invariantCheck(tree.search(2)))
+            assertEquals("root", tree.testSearch(2)?.right?.value)
+            assertEquals(true, invariantCheck(tree.testSearch(2)))
         }
 
         @Test
@@ -134,7 +135,7 @@ class AVLTreeTest {
                 val list : List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
                 for (item in list)
                     tree.add(item, "0")
-                assertEquals(tree.search(list.last())?.value, "0")
+                assertEquals(tree.testSearch(list.last())?.value, "0")
             }
         }
 
@@ -150,6 +151,18 @@ class AVLTreeTest {
             }
         }
     }
+
+    private fun<K: Comparable<K>, V> AVLTree<K, V>.testSearch(key: K): AVLNode<K, V>? {
+        fun <K : Comparable<K>, V> AVLNode<K, V>.recursiveSearch(key: K): AVLNode<K, V>? =
+            when (key.compareTo(this.key)) {
+                1 -> this.right?.recursiveSearch(key)
+                0 -> this
+                -1 -> this.left?.recursiveSearch(key)
+                else -> null
+            }
+        return this.root?.recursiveSearch(key)
+    }
+
 
     private fun getBalance(node: AVLNode<Int, String>?): Int {
         if (node == null) {
