@@ -150,6 +150,14 @@ class AVLTreeTest {
                 tree.search(100)
             }
         }
+
+        @Test
+        @DisplayName("Existence element search")
+        fun `Existence element search`() {
+            tree.add(100, "root")
+
+            assertEquals("root", tree.search(100).value)
+        }
     }
 
     private fun<K: Comparable<K>, V> AVLTree<K, V>.testSearch(key: K): AVLNode<K, V>? {
@@ -162,7 +170,6 @@ class AVLTreeTest {
             }
         return this.root?.recursiveSearch(key)
     }
-
 
     private fun getBalance(node: AVLNode<Int, String>?): Int {
         if (node == null) {
