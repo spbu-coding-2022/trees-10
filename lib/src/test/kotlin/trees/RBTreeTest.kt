@@ -156,6 +156,8 @@ class RBTreeTest {
         @DisplayName("Root element del")
         fun `Root element del`() {
             tree.add(100, "root")
+            tree.add(120)
+            tree.add(50)
 
             tree.remove(100)
 
@@ -180,6 +182,51 @@ class RBTreeTest {
             tree.add(120, "b")
 
             tree.remove(100)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Black node simple remove test")
+        fun `Black node simple remove test`() {
+            tree.add(100, "P")
+            tree.add(120, "S")
+            tree.add(50, "Sl")
+            tree.add(125, "Sr")
+            tree.add(115, "Sr")
+
+            tree.remove(120)
+
+            assertTrue(tree.rulesCheck())
+        }
+        @Test
+        @DisplayName("Red node with black children remove test")
+        fun `Red node with black children remove test`() {
+            tree.add(13)
+            tree.add(17)
+            tree.add(8)
+            tree.add(25)
+            tree.add(1)
+            tree.add(11)
+            tree.add(15)
+            tree.add(27)
+
+            tree.remove(17)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Black node with red children remove test")
+        fun `Black node with red children remove test`() {
+            tree.add(13)
+            tree.add(17)
+            tree.add(8)
+            tree.add(25)
+            tree.add(1)
+            tree.add(11)
+
+            tree.remove(8)
 
             assertTrue(tree.rulesCheck())
         }
