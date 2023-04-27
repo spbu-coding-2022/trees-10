@@ -200,9 +200,9 @@ class BinaryTreeTest {
      */
     private fun <K : Comparable<K>, V> BinaryNode<K, V>.recursiveSearch(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
-            1 -> this.right?.search(key)
+            1 -> this.right?.recursiveSearch(key)
             0 -> this
-            -1 -> this.left?.search(key)
+            -1 -> this.left?.recursiveSearch(key)
             else -> null
         }
 
