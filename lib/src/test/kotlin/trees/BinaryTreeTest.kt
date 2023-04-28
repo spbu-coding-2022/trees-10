@@ -190,7 +190,7 @@ class BinaryTreeTest {
      * Проверка на то, что левый узел меньше, а правый больше
      * @return True - узлы размещены как положено
      * */
-    fun <K : Comparable<K>, V> BinaryNode<K, V>.childrenCheck(): Boolean =
+    private fun <K : Comparable<K>, V> BinaryNode<K, V>.childrenCheck(): Boolean =
         (this.left == null || this.left?.compareTo(this) == -1)
                 && (this.right == null || this.right?.compareTo(this) == 1)
 
@@ -200,9 +200,9 @@ class BinaryTreeTest {
      */
     private fun <K : Comparable<K>, V> BinaryNode<K, V>.recursiveSearch(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
-            1 -> this.right?.search(key)
+            1 -> this.right?.recursiveSearch(key)
             0 -> this
-            -1 -> this.left?.search(key)
+            -1 -> this.left?.recursiveSearch(key)
             else -> null
         }
 
@@ -210,7 +210,7 @@ class BinaryTreeTest {
      * Проверяет ноду на существование
      * @return True - найден узел с совпадающим ключом и значением
      */
-    fun <K : Comparable<K>, V> BinaryTree<K, V>.nodeExists(key: K, value: V?): Boolean {
+    private fun <K : Comparable<K>, V> BinaryTree<K, V>.nodeExists(key: K, value: V?): Boolean {
         if (this.root == null)
             return false
         val searchRes = this.root?.recursiveSearch(key)

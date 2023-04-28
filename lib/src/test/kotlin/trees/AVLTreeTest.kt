@@ -16,11 +16,11 @@ import kotlin.test.BeforeTest
 class AVLTreeTest {
 
     private lateinit var tree: AVLTree<Int, String>
+
     @BeforeTest
     fun init() {
         tree = AVLTree()
     }
-
 
     @Nested
     inner class `Remove check` {
@@ -29,8 +29,9 @@ class AVLTreeTest {
         fun `Root remove`() {
             tree.add(100, "root")
             tree.remove(100)
-            assertEquals(null, tree.search(100)?.value)
+            assertEquals(null, tree.testSearch(100)?.value)
         }
+
         @Test
         @DisplayName("Non-existence element remove check")
         fun `Non-existence element remove check`() {
@@ -46,13 +47,14 @@ class AVLTreeTest {
             tree.add(13)
             tree.remove(13)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals("a", tree.search(10)?.value) },
-                Executable { assertEquals("b", tree.search(14)?.value) },
-                Executable { assertEquals(null, tree.search(13)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(10))) }
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals("a", tree.testSearch(10)?.value) },
+                Executable { assertEquals("b", tree.testSearch(14)?.value) },
+                Executable { assertEquals(null, tree.testSearch(13)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
+
         @Test
         @DisplayName("Element with one child node remove")
         fun `Element with one child node remove`() {
@@ -62,13 +64,14 @@ class AVLTreeTest {
             tree.add(13, "c")
             tree.remove(14)
             assertAll("elements",
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals("a", tree.search(10)?.value) },
-                Executable { assertEquals("c", tree.search(13)?.value) },
-                Executable { assertEquals(null, tree.search(14)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(10))) }
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals("a", tree.testSearch(10)?.value) },
+                Executable { assertEquals("c", tree.testSearch(13)?.value) },
+                Executable { assertEquals(null, tree.testSearch(14)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(10))) }
             )
         }
+
         @Test
         @DisplayName("Element with two child nodes remove")
         fun `Element with two child nodes remove`() {
@@ -77,16 +80,17 @@ class AVLTreeTest {
             tree.add(1, "b")
             tree.add(6, "c")
             tree.add(7, "d")
+            tree.add(3, "e")
 
             tree.remove(3)
             assertAll("elements",
-                Executable { assertEquals("a", tree.search(4)?.value) },
-                Executable { assertEquals("b", tree.search(1)?.value) },
-                Executable { assertEquals(null, tree.search(3)?.value) },
-                Executable { assertEquals("c", tree.search(6)?.value) },
-                Executable { assertEquals("d", tree.search(7)?.value) },
-                Executable { assertEquals("root", tree.search(8)?.value) },
-                Executable { assertEquals(true, invariantCheck(tree.search(4))) }
+                Executable { assertEquals("a", tree.testSearch(4)?.value) },
+                Executable { assertEquals("b", tree.testSearch(1)?.value) },
+                Executable { assertEquals(null, tree.testSearch(3)?.value) },
+                Executable { assertEquals("c", tree.testSearch(6)?.value) },
+                Executable { assertEquals("d", tree.testSearch(7)?.value) },
+                Executable { assertEquals("root", tree.testSearch(8)?.value) },
+                Executable { assertEquals(true, invariantCheck(tree.testSearch(4))) }
             )
         }
     }
@@ -97,7 +101,7 @@ class AVLTreeTest {
         @DisplayName("Simple add")
         fun `Simple add`() {
             tree.add(30, "root")
-            assertEquals("root", tree.search(30)?.value)
+            assertEquals("root", tree.testSearch(30)?.value)
         }
 
         @Test
@@ -107,14 +111,15 @@ class AVLTreeTest {
 
             assertThrows(NodeAlreadyExistsException::class.java) { tree.add(100) }
         }
+
         @Test
         @DisplayName("Left rotation on add")
         fun `Left rotation on add`() {
             tree.add(1, "root")
             tree.add(2, "a")
             tree.add(3, "b")
-            assertEquals("root", tree.search(2)?.left?.value)
-            assertEquals(true, invariantCheck(tree.search(2)))
+            assertEquals("root", tree.testSearch(2)?.left?.value)
+            assertEquals(true, invariantCheck(tree.testSearch(2)))
         }
 
         @Test
@@ -123,18 +128,18 @@ class AVLTreeTest {
             tree.add(3, "root")
             tree.add(2, "a")
             tree.add(1, "b")
-            assertEquals("root", tree.search(2)?.right?.value)
-            assertEquals(true, invariantCheck(tree.search(2)))
+            assertEquals("root", tree.testSearch(2)?.right?.value)
+            assertEquals(true, invariantCheck(tree.testSearch(2)))
         }
 
         @Test
         @DisplayName("Multiply add")
         fun `Multiply add`() {
             assertTimeout(ofMillis(1000)) {
-                val list : List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+                val list: List<Int> = (List(100000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
                 for (item in list)
                     tree.add(item, "0")
-                assertEquals(tree.search(list.last())?.value, "0")
+                assertEquals(tree.testSearch(list.last())?.value, "0")
             }
         }
 
@@ -149,26 +154,37 @@ class AVLTreeTest {
                 tree.search(100)
             }
         }
+
+        @Test
+        @DisplayName("Existence element search")
+        fun `Existence element search`() {
+            tree.add(100, "root")
+
+            assertEquals("root", tree.search(100).value)
+        }
+    }
+
+    private fun <K : Comparable<K>, V> AVLTree<K, V>.testSearch(key: K): AVLNode<K, V>? {
+        fun <K : Comparable<K>, V> AVLNode<K, V>.recursiveSearch(key: K): AVLNode<K, V>? =
+            when (key.compareTo(this.key)) {
+                1 -> this.right?.recursiveSearch(key)
+                0 -> this
+                -1 -> this.left?.recursiveSearch(key)
+                else -> null
+            }
+        return this.root?.recursiveSearch(key)
     }
 
     private fun getBalance(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return getHeight(node.left) - getHeight(node.right)
+        return if (node == null)
+            0
+        else getHeight(node.left) - getHeight(node.right)
     }
 
-    private fun getHeight(node: AVLNode<Int, String>?): Int {
-        if (node == null) {
-            return 0
-        }
-        return node.height
-    }
-
+    private fun getHeight(node: AVLNode<Int, String>?): Int = node?.height ?: 0
     fun invariantCheck(node: AVLNode<Int, String>?): Boolean {
-        if (node == null) {
-            return true
-        }
-        return abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
+        return if (node == null)
+            true
+        else abs(getBalance(node)) <= 1 && invariantCheck(node.left) && invariantCheck(node.right)
     }
 }

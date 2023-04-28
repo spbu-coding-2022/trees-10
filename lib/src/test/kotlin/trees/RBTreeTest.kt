@@ -1,12 +1,9 @@
-import exceptions.NodeAlreadyExistsException
-import exceptions.NodeNotFoundException
-import exceptions.NullNodeException
-import exceptions.TreeException
-import nodes.Color
-import nodes.RBNode
+import exceptions.*
+import nodes.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import trees.RBTree
@@ -70,6 +67,7 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
         @DisplayName("Balance and repaint adding check")
         fun `Balance and repaint simple check`() {
@@ -155,8 +153,11 @@ class RBTreeTest {
     @Nested
     inner class `Remove check` {
         @Test
+        @DisplayName("Root element del")
         fun `Root element del`() {
             tree.add(100, "root")
+            tree.add(120)
+            tree.add(50)
 
             tree.remove(100)
 
@@ -164,6 +165,7 @@ class RBTreeTest {
         }
 
         @Test
+        @DisplayName("Node with no children del")
         fun `Node with no children del`() {
             tree.add(100, "a")
             tree.add(120, "b")
@@ -174,6 +176,7 @@ class RBTreeTest {
         }
 
         @Test
+        @DisplayName("Node with one children del")
         fun `Node with one children del`() {
             tree.add(100, "a")
             tree.add(120, "b")
@@ -182,9 +185,71 @@ class RBTreeTest {
 
             assertTrue(tree.rulesCheck())
         }
+
         @Test
+        @DisplayName("Black node simple remove test")
+        fun `Black node simple remove test`() {
+            tree.add(100, "P")
+            tree.add(120, "S")
+            tree.add(50, "Sl")
+            tree.add(125, "Sr")
+            tree.add(115, "Sr")
+
+            tree.remove(120)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Red node with black children remove test")
+        fun `Red node with black children remove test`() {
+            tree.add(13)
+            tree.add(17)
+            tree.add(8)
+            tree.add(25)
+            tree.add(1)
+            tree.add(11)
+            tree.add(15)
+            tree.add(27)
+
+            tree.remove(17)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Black node with red children remove test")
+        fun `Black node with red children remove test`() {
+            tree.add(13)
+            tree.add(17)
+            tree.add(8)
+            tree.add(25)
+            tree.add(1)
+            tree.add(11)
+
+            tree.remove(8)
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Random tree element del")
+        @RepeatedTest(10)
+        fun `Random tree element del`() {
+            val list: List<Int> = (List(1000) { Random.nextInt(1, 100000) }).distinct().toMutableList()
+
+            for (item in list)
+                tree.add(item, "a")
+
+            tree.remove(list.asSequence().shuffled().first())
+
+            assertTrue(tree.rulesCheck())
+        }
+
+        @Test
+        @DisplayName("Non-existent element del")
         fun `Non-existent element del`() {
-            assertThrows(NodeNotFoundException::class.java ){ tree.remove(100) }
+            assertThrows(NodeNotFoundException::class.java) { tree.remove(100) }
         }
     }
 

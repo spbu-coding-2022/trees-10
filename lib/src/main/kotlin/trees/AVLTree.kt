@@ -1,6 +1,8 @@
 package trees
 
-import exceptions.*
+import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
+import exceptions.NullNodeException
 import nodes.AVLNode
 import kotlin.math.max
 
@@ -30,7 +32,7 @@ class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
     override fun remove(key: K) {
         fun removeRecursive(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
             if (node == null) {
-                return null
+                throw NodeNotFoundException()
             }
 
             if (key < node.key) {
@@ -56,7 +58,7 @@ class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
         root = removeRecursive(root, key)
     }
 
-    override fun search(key: K): AVLNode<K, V>? {
+    override fun search(key: K): AVLNode<K, V> {
         fun searchRecursive(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
             if (node == null) {
                 return null
@@ -71,7 +73,7 @@ class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
             }
         }
 
-        return searchRecursive(root, key)
+        return searchRecursive(root, key) ?: throw NodeNotFoundException()
     }
 
     private fun findMin(node: AVLNode<K, V>?): AVLNode<K, V>? = if (node?.left != null) findMin(node.left) else node
