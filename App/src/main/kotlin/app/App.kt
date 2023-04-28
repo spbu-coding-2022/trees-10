@@ -2,20 +2,32 @@ package app
 
 import guiClasses.Frame
 import Menu.*
-import java.awt.Container
 import java.awt.EventQueue
-import java.awt.LayoutManager
-import javax.swing.GroupLayout
-import javax.swing.JButton
-import javax.swing.JPanel
+import javax.swing.*
 
 fun main() {
     EventQueue.invokeLater {
-//        val treeFrame = Frame("Treeple",1000, 700, 360, 50)
-        val menuFrame = Frame("Treeple Menu",300, 400, 50, 50)
+        val treeFrame = Frame("Treeple", 1000, 700, 360, 50)
+        val menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
-        val panel = JPanel()
-        panel.add(MenuClass())
-        menuFrame.add(panel)
+        // Создаем панель с компонентами
+        val treePanel = JPanel()
+        val menuPanel = JPanel()
+
+        val scrollPane = JScrollPane()
+        // Добавляем панель на панель с прокруткой
+        scrollPane.setViewportView(treePanel)
+
+        // Добавляем панель с прокруткой на окно
+        menuFrame.contentPane.add(scrollPane)
+
+        // Устанавливаем режим прокрутки по вертикали и горизонтали
+        scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+
+        menuPanel.add(MenuClass())
+
+        menuFrame.add(menuPanel)
+        treeFrame.add(treePanel)
     }
 }

@@ -13,25 +13,9 @@ class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFram
         // Устанавливаем положение окна на экране
         setLocation(locX, locY)
 
-        // Создаем панель с прокруткой
-        val scrollPane = JScrollPane()
-
         // Установка изображения
         val icon = ImageIcon("tree.jpg").image
         iconImage = icon
-
-        // Создаем панель с компонентами
-        val panel = JPanel()
-
-        // Добавляем панель на панель с прокруткой
-        scrollPane.setViewportView(panel)
-
-        // Добавляем панель с прокруткой на окно
-        contentPane.add(scrollPane)
-
-        // Устанавливаем режим прокрутки по вертикали и горизонтали
-        scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-        scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 
         //Запрет на форматирование окна
         isResizable = false
