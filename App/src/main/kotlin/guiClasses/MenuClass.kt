@@ -19,6 +19,7 @@ class MenuClass() : JMenuBar() {
      * */
     private fun updateMenuItemsChoosing(item: JMenuItem) {
         item.background = Color.PINK
+        menuItems.filter { it != item }.forEach { it.background = Color.WHITE}
     }
 
     private val menu = JMenu("Выбор Дерева")
