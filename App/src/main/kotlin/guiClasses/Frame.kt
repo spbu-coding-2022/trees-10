@@ -1,14 +1,14 @@
-package Frame
+package guiClasses
 
 import javax.swing.*
 
-class Frame(name: String, width: Int, heidht: Int, locX: Int, locY: Int) : JFrame() {
+class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFrame() {
     init {
         // Устанавливаем заголовок окна
         title = name
 
         // Устанавливаем размер окна
-        setSize(width, heidht)
+        setSize(width, height)
 
         // Устанавливаем положение окна на экране
         setLocation(locX, locY)
@@ -37,7 +37,7 @@ class Frame(name: String, width: Int, heidht: Int, locX: Int, locY: Int) : JFram
         isResizable = false
 
         // Устанавливаем операцию закрытия окна
-        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
 
         // Отображаем окно
         isVisible = true
