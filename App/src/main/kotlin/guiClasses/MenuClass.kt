@@ -1,4 +1,4 @@
-package Menu
+package guiClasses
 
 import java.awt.Color
 import javax.swing.JMenu

@@ -1,8 +1,6 @@
 package app
 
-import guiClasses.Frame
-import Menu.*
-import guiClasses.KeyTextField
+import guiClasses.*
 import javax.swing.*
 
 private fun treeFrameInit() {
@@ -40,6 +38,9 @@ private fun menuFrameInit() {
     val saveButton = JButton("Save")
 
     val treeMenu = MenuClass()
+
+    menuFrame.jMenuBar = treeMenu
+
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
