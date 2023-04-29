@@ -31,11 +31,13 @@ private fun menuFrameInit() {
     val addButton = JButton("Add")
     val addTextField = KeyTextField()
 
-    val removeButton = JButton("remove")
+    val removeButton = JButton("Remove")
     val removeTextField = KeyTextField()
 
-    val searchButton = JButton("search")
+    val searchButton = JButton("Find")
     val searchTextField = KeyTextField()
+
+    val saveButton = JButton("Save")
 
     val treeMenu = MenuClass()
 
@@ -47,20 +49,24 @@ private fun menuFrameInit() {
     layout.autoCreateGaps = true
 
     layout.setHorizontalGroup(
-        layout.createSequentialGroup() // Последовательные группы
-            .addGroup( // Группа с кнопками
-                // GroupLayout.Alignment.LEADING - выравнивание по левому краю в горизонтальном измерении
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(addButton)
-                    .addComponent(removeButton)
-                    .addComponent(searchButton)
+        layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+            .addGroup( // Группа с кнопками и TextFields
+                layout.createSequentialGroup()
+                    .addGroup( // Группа с кнопками
+                        // GroupLayout.Alignment.LEADING - выравнивание по левому краю в горизонтальном измерении
+                        layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(addButton)
+                            .addComponent(removeButton)
+                            .addComponent(searchButton)
+                    )
+                    .addGroup( // Группа с TextFields
+                        layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(addTextField)
+                            .addComponent(removeTextField)
+                            .addComponent(searchTextField)
+                    )
             )
-            .addGroup( // Группа с TextFields
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(addTextField)
-                    .addComponent(removeTextField)
-                    .addComponent(searchTextField)
-            )
+            .addComponent(saveButton)
     )
 
     layout.setVerticalGroup(
@@ -81,6 +87,11 @@ private fun menuFrameInit() {
                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(searchButton)
                     .addComponent(searchTextField)
+            )
+
+            .addGroup(
+                layout.createSequentialGroup()
+                    .addComponent(saveButton)
             )
 
     )
