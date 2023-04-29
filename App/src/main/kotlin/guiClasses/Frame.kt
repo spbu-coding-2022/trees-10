@@ -1,5 +1,6 @@
 package guiClasses
 
+import java.awt.Dimension
 import javax.swing.*
 
 class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFrame() {
@@ -9,6 +10,7 @@ class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFram
 
         // Устанавливаем размер окна
         setSize(width, height)
+        minimumSize = Dimension(width, height)
 
         // Устанавливаем положение окна на экране
         setLocation(locX, locY)
@@ -16,9 +18,6 @@ class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFram
         // Установка изображения
         val icon = ImageIcon("tree.jpg").image
         iconImage = icon
-
-        //Запрет на форматирование окна
-        isResizable = false
 
         // Устанавливаем операцию закрытия окна
         defaultCloseOperation = EXIT_ON_CLOSE
