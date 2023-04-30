@@ -1,6 +1,5 @@
-package databases.binTree
+package databases.sqlite
 
-import trees.BinaryTree
 import java.io.Closeable
 import java.sql.DriverManager
 import java.sql.SQLException

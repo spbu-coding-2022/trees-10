@@ -1,4 +1,4 @@
-package databases.binTree
+package databases.sqlite
 
 import exceptions.NodeNotFoundException
 import exceptions.NullNodeException

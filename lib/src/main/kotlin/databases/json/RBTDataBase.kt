@@ -1,4 +1,4 @@
-package databases.RBTree
+package databases.json
 
 import trees.RBTree
 import java.io.*
