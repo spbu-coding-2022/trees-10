@@ -8,6 +8,8 @@ data class JsonRBNode(
     val value: String,
     val key: Int,
     val color: Color,
+    val x: Double,
+    val y: Double,
     val left: JsonRBNode?,
     val right: JsonRBNode?
 )
