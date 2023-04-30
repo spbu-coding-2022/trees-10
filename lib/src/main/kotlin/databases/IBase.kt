@@ -1,8 +1,26 @@
 package databases
 
+import java.awt.Point
+
 interface IBase<TreeType, K> {
+
+    /**
+     * Сохраняет переданное дерево в базу данных.
+     */
     fun saveTree(tree: TreeType)
-    fun loadTree() : TreeType
-    fun getCoordinate(key: K)
-    fun setCoordinate(key: K, x: Double, y: Double)
+
+    /**
+     * Выгружает дерево из базы данных.
+     */
+    fun loadTree(): TreeType
+
+    /**
+     * Выполняет поиск координаты в сохранённом в базе данных дереве.
+     */
+    fun getPoint(key: K): Point
+
+    /**
+     * Изменяет координату в сохранённой ноде с указанной координатой.
+     */
+    fun setPoint(key: K, p: Point)
 }
