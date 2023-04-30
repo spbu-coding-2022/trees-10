@@ -1,6 +1,7 @@
 package databases.json
 
 import databases.IBase
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nodes.RBNode
@@ -11,7 +12,7 @@ class RBTBase<V>(
     private val dbPath: String,
     private val serializeValue: (value: V?) -> String = { value -> value.toString() },
     private val deserializeValue: (strValue: String) -> V
-) : IBase<RBTree<Int, V>> {
+) : IBase<RBTree<Int, V>, Int> {
 
     private var file: File = File(dbPath)
     override fun saveTree(tree: RBTree<Int, V>) {
@@ -20,12 +21,27 @@ class RBTBase<V>(
         }
     }
 
-    override fun loadTree(): RBTree<Int, V> {
+    override fun loadTree(): RBTree<Int, V> = Json.decodeFromString<JsonRBTree>(file.readText()).convertToTree()
+
+    override fun setCoordinate(key: Int, x: Double, y: Double) {
+
+    }
+
+    override fun getCoordinate(key: Int) {
         TODO("Not yet implemented")
     }
 
-    override fun close() {
-    }
+    private fun JsonRBTree.convertToTree(): RBTree<Int, V> =
+        RBTree<Int, V>().also {
+            it.root = this.root?.convertToNode()
+        }
+
+    private fun JsonRBNode.convertToNode(): RBNode<Int, V> =
+        RBNode(this.key, deserializeValue(this.value)).also {
+            it.color = this.color
+            it.left = this.left?.convertToNode()
+            it.right = this.right?.convertToNode()
+        }
 
     private fun RBTree<Int, V>.convertToJson() = Json.encodeToString(JsonRBTree(root?.convertToJson()))
     private fun RBNode<Int, V>.convertToJson(x: Double = 0.0, y: Double = 0.0): JsonRBNode =
