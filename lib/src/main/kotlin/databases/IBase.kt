@@ -2,6 +2,9 @@ package databases
 
 import java.awt.Point
 
+/**
+ * Общий интерфейс для всех баз данных
+ */
 interface IBase<TreeType, K> {
 
     /**
