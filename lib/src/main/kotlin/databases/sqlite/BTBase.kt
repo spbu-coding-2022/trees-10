@@ -1,6 +1,7 @@
 package databases.sqlite
 
 import databases.IBase
+import exceptions.NodeNotFoundException
 import exceptions.NullNodeException
 import nodes.BinaryNode
 import trees.BinaryTree
@@ -16,7 +17,7 @@ class BTBase<K : Comparable<K>, V>(
     private val deserializeKey: (strKey: String) -> K,
     private val serializeValue: (value: V?) -> String = { value -> value.toString() },
     private val deserializeValue: (strValue: String) -> V
-) : IBase<BinaryTree<K, V>, Int>, Closeable {
+) : IBase<BinaryTree<K, V>, K>, Closeable {
     object DbConstants {
         const val DB_NAME = "BinaryNodes"
     }
@@ -27,6 +28,7 @@ class BTBase<K : Comparable<K>, V>(
     private val addNodeStatement by lazy { connection.prepareStatement("INSERT INTO ${DbConstants.DB_NAME} (key, value, x, y) VALUES (?, ?, ?, ?);") }
     private val setPointStatement by lazy { connection.prepareStatement("UPDATE ${DbConstants.DB_NAME} SET x=?, y=? WHERE key=?;") }
     private val getPointStatement by lazy { connection.prepareStatement("SELECT x, y FROM ${DbConstants.DB_NAME} WHERE key=?;") }
+    private val getValueStatement by lazy { connection.prepareStatement("SELECT value FROM ${DbConstants.DB_NAME} WHERE key=?;") }
     private val getNodesStatement by lazy { connection.prepareStatement("SELECT key, value, x, y, value FROM ${DbConstants.DB_NAME}") }
     private val dropDatabaseStatement by lazy { connection.prepareStatement("DELETE FROM ${DbConstants.DB_NAME};") }
 
@@ -53,20 +55,26 @@ class BTBase<K : Comparable<K>, V>(
         return tree
     }
 
-    override fun setPoint(key: Int, p: Point) {
+    override fun setPoint(key: K, p: Point) {
+        if (!nodeExists(key))
+            throw NodeNotFoundException()
+
         setPointStatement.setInt(1, p.x)
         setPointStatement.setInt(2, p.y)
-        setPointStatement.setInt(3, key)
+        setPointStatement.setString(3, serializeKey(key))
 
         setPointStatement.execute()
     }
 
-    override fun getPoint(key: Int): Point {
-        getPointStatement.setInt(1, key)
+    override fun getPoint(key: K): Point {
+        if (!nodeExists(key))
+            throw NodeNotFoundException()
+
+        getPointStatement.setString(1, serializeKey(key))
 
         val stateRes = getPointStatement.executeQuery()
 
-        val p = Point(-1, -1)
+        val p = Point()
 
         while (stateRes.next()) {
             p.x = stateRes.getInt(1)
@@ -74,6 +82,13 @@ class BTBase<K : Comparable<K>, V>(
         }
 
         return p
+    }
+
+    private fun nodeExists(key: K): Boolean {
+        getValueStatement.setString(1, serializeKey(key))
+        val stateRes = getValueStatement.executeQuery()
+
+        return stateRes.next()
     }
 
     private fun addNode(node: BinaryNode<K, V>, p: Point = Point(0, 0)) {
@@ -94,6 +109,9 @@ class BTBase<K : Comparable<K>, V>(
         addNodeStatement.close()
         getNodesStatement.close()
         dropDatabaseStatement.close()
+        getPointStatement.close()
+        getValueStatement.close()
+        setPointStatement.close()
 
         connection.close()
     }
