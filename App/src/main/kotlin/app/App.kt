@@ -1,7 +1,12 @@
 package app
 
-import guiClasses.*
-import javax.swing.*
+import guiClasses.Frame
+import guiClasses.KeyTextField
+import guiClasses.MenuClass
+import javax.swing.GroupLayout
+import javax.swing.JButton
+import javax.swing.JPanel
+import javax.swing.JScrollPane
 
 private fun treeFrameInit() {
     val treeFrame = Frame("Treeple", 1000, 700, 360, 50)
@@ -37,7 +42,19 @@ private fun menuFrameInit() {
 
     val saveButton = JButton("Save")
 
-    val treeMenu = MenuClass()
+    val treeMenu = MenuClass(){tree ->
+        when (tree){
+            is BinaryTree<*, *> -> {
+
+            }
+            is AVLTree<*, *> -> {
+
+            }
+            is RBTree<*, *> -> {
+
+            }
+        }
+    }
 
     menuFrame.jMenuBar = treeMenu
 

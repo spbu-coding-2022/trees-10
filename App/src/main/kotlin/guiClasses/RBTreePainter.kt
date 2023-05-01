@@ -13,7 +13,7 @@ class RBTNodePanel(private val tree: RBTree<Int, String>): JPanel(){
     val lineColor = java.awt.Color.BLACK
 
     init {
-        preferredSize = Dimension(400, 400)
+        preferredSize = Dimension(1000, 700)
     }
 
     override fun paintComponent(g: Graphics) {
@@ -34,10 +34,10 @@ class RBTNodePanel(private val tree: RBTree<Int, String>): JPanel(){
         }
         if (node.left != null) {
             drawNode(g, node.left!!, x - width / (1 shl (getHeight(node.left!!) + 2)), y + nodeMargin + nodeSize, x)
-        }
+        }                   //рекурсивно рисуем левое поддерево, shl - побитовый сдвиг влево
         if (node.right != null) {
             drawNode(g, node.right!!, x + width / (1 shl (getHeight(node.right!!) + 2)), y + nodeMargin + nodeSize, x)
-        }
+        }                   //рекурсивно рисуем правое поддерево
     }
     private fun getHeight(node: RBNode<Int, String>): Int {
         if (node == null) {

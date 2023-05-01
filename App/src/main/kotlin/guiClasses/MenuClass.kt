@@ -1,11 +1,14 @@
 package guiClasses
 
+import trees.AVLTree
+import trees.BinaryTree
+import trees.RBTree
 import java.awt.Color
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 
-class MenuClass() : JMenuBar() {
+class MenuClass(private val onTreeSelected: (tree: Any) -> Unit) : JMenuBar() {
 
     /**
      * Визуально обозначает элементы как неактивные
@@ -23,7 +26,10 @@ class MenuClass() : JMenuBar() {
     }
 
     private val menu = JMenu("Выбор Дерева")
-    private val menuItems = arrayOf(JMenuItem("Binary Tree"), JMenuItem("AVL-Tree"), JMenuItem("Red-black Tree"))
+    private val menuItems = arrayOf(
+        JMenuItem("Binary Tree"),
+        JMenuItem("AVL-Tree"),
+        JMenuItem("Red-black Tree"))
 
     init {
         menuItems.forEach { menu.add(it) }
@@ -32,16 +38,19 @@ class MenuClass() : JMenuBar() {
         // Слушатель событий для элемента меню "Binary Tree"
         menuItems[0].addActionListener {
             updateMenuItemsChoosing(menuItems[0])
+            onTreeSelected(BinaryTree<Int, String>())
         }
 
         // Слушатель событий для элемента меню "AVL-Tree"
         menuItems[1].addActionListener {
             updateMenuItemsChoosing(menuItems[1])
+            onTreeSelected(AVLTree<Int, String>())
         }
 
         // Слушатель событий для элемента меню "Red-black Tree"
         menuItems[2].addActionListener {
             updateMenuItemsChoosing(menuItems[2])
+            onTreeSelected(RBTree<Int, String>())
         }
 
         add(menu)
