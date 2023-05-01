@@ -10,18 +10,20 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 
-class BTBase<V>(
+class BTBase<K : Comparable<K>, V>(
     dbPath: String,
+    private val serializeKey: (key: K) -> String = { value -> value.toString() },
+    private val deserializeKey: (strKey: String) -> K,
     private val serializeValue: (value: V?) -> String = { value -> value.toString() },
     private val deserializeValue: (strValue: String) -> V
-) : IBase<BinaryTree<Int, V>, Int>, Closeable {
+) : IBase<BinaryTree<K, V>, Int>, Closeable {
     object DbConstants {
         const val DB_NAME = "BinaryNodes"
     }
 
     private val connection = DriverManager.getConnection("jdbc:sqlite:$dbPath")
         ?: throw SQLException("Cannot connect to database")
-    private val createBaseStatement by lazy { connection.prepareStatement("CREATE TABLE if not exists ${DbConstants.DB_NAME} (key int, value varchar(255), x double, y double);") }
+    private val createBaseStatement by lazy { connection.prepareStatement("CREATE TABLE if not exists ${DbConstants.DB_NAME} (key varchar(255) NOT NULL, value varchar(255), x double NOT NULL, y double NOT NULL);") }
     private val addNodeStatement by lazy { connection.prepareStatement("INSERT INTO ${DbConstants.DB_NAME} (key, value, x, y) VALUES (?, ?, ?, ?);") }
     private val setPointStatement by lazy { connection.prepareStatement("UPDATE ${DbConstants.DB_NAME} SET x=?, y=? WHERE key=?;") }
     private val getPointStatement by lazy { connection.prepareStatement("SELECT x, y FROM ${DbConstants.DB_NAME} WHERE key=?;") }
@@ -32,7 +34,7 @@ class BTBase<V>(
         createBaseStatement.execute()
     }
 
-    override fun saveTree(tree: BinaryTree<Int, V>) {
+    override fun saveTree(tree: BinaryTree<K, V>) {
         clear()
         if (tree.root == null)
             return
@@ -41,13 +43,13 @@ class BTBase<V>(
         }
     }
 
-    override fun loadTree(): BinaryTree<Int, V> {
-        val tree = BinaryTree<Int, V>()
+    override fun loadTree(): BinaryTree<K, V> {
+        val tree = BinaryTree<K, V>()
 
         val stateRes = getNodesStatement.executeQuery()
 
         while (stateRes.next())
-            tree.add(stateRes.getInt(1), deserializeValue(stateRes.getString(2)))
+            tree.add(deserializeKey(stateRes.getString(1)), deserializeValue(stateRes.getString(2)))
         return tree
     }
 
@@ -74,8 +76,8 @@ class BTBase<V>(
         return p
     }
 
-    private fun addNode(node: BinaryNode<Int, V>, p: Point = Point(0, 0)) {
-        addNodeStatement.setInt(1, node.key)
+    private fun addNode(node: BinaryNode<K, V>, p: Point = Point(0, 0)) {
+        addNodeStatement.setString(1, serializeKey(node.key))
         addNodeStatement.setString(2, serializeValue(node.value))
         addNodeStatement.setInt(3, p.x)
         addNodeStatement.setInt(4, p.y)
@@ -96,11 +98,11 @@ class BTBase<V>(
         connection.close()
     }
 
-    private fun BinaryTree<Int, V>.toList(): MutableList<BinaryNode<Int, V>> =
+    private fun BinaryTree<K, V>.toList(): MutableList<BinaryNode<K, V>> =
         this.root?.toList(mutableListOf()) ?: throw NullNodeException()
 
-    private fun BinaryNode<Int, V>.toList(list: MutableList<BinaryNode<Int, V>>): MutableList<BinaryNode<Int, V>> {
-        var myList: MutableList<BinaryNode<Int, V>> = list
+    private fun BinaryNode<K, V>.toList(list: MutableList<BinaryNode<K, V>>): MutableList<BinaryNode<K, V>> {
+        var myList: MutableList<BinaryNode<K, V>> = list
 
         myList.add(this)
         this.left?.let {
