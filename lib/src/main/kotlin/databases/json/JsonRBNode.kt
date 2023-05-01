@@ -6,7 +6,7 @@ import nodes.Color
 @Serializable
 data class JsonRBNode(
     val value: String,
-    val key: Int,
+    val key: String,
     val color: Color,
     var x: Int,
     var y: Int,

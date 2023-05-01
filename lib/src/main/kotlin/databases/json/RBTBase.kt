@@ -10,22 +10,24 @@ import trees.RBTree
 import java.awt.Point
 import java.io.File
 
-class RBTBase<V>(
+class RBTBase<K: Comparable<K>, V>(
     private val dbPath: String,
+    private val serializeKey: (key: K) -> String = { value -> value.toString() },
+    private val deserializeKey: (strKey: String) -> K,
     private val serializeValue: (value: V?) -> String = { value -> value.toString() },
     private val deserializeValue: (strValue: String) -> V
-) : IBase<RBTree<Int, V>, Int> {
+) : IBase<RBTree<K, V>, K> {
 
     private var file: File = File(dbPath)
-    override fun saveTree(tree: RBTree<Int, V>) {
+    override fun saveTree(tree: RBTree<K, V>) {
         file.printWriter().use { out ->
             out.write(tree.convertToJson())
         }
     }
 
-    override fun loadTree(): RBTree<Int, V> = Json.decodeFromString<JsonRBTree>(file.readText()).convertToTree()
+    override fun loadTree(): RBTree<K, V> = Json.decodeFromString<JsonRBTree>(file.readText()).convertToTree()
 
-    override fun setPoint(key: Int, p: Point) {
+    override fun setPoint(key: K, p: Point) {
         val savedTree = Json.decodeFromString<JsonRBTree>(file.readText())
 
         if (savedTree.root?.changeCoordinate(key, p) != true)
@@ -37,12 +39,12 @@ class RBTBase<V>(
 
     }
 
-    override fun getPoint(key: Int): Point {
+    override fun getPoint(key: K): Point {
         return Json.decodeFromString<JsonRBTree>(file.readText()).root?.searchCoordinate(key)
             ?: throw NodeNotFoundException()
     }
 
-    private fun JsonRBNode.searchCoordinate(key: Int): Point? {
+    private fun JsonRBNode.searchCoordinate(key: K): Point? {
         if (this.key == key)
             return Point(this.x, this.y)
         else {
@@ -57,7 +59,7 @@ class RBTBase<V>(
         return null
     }
 
-    private fun JsonRBNode.changeCoordinate(key: Int, p: Point): Boolean {
+    private fun JsonRBNode.changeCoordinate(key: K, p: Point): Boolean {
         return if (this.key == key) {
             this.x = p.x
             this.y = p.y
@@ -70,23 +72,23 @@ class RBTBase<V>(
         }
     }
 
-    private fun JsonRBTree.convertToTree(): RBTree<Int, V> =
-        RBTree<Int, V>().also {
+    private fun JsonRBTree.convertToTree(): RBTree<K, V> =
+        RBTree<K, V>().also {
             it.root = this.root?.convertToNode()
         }
 
-    private fun JsonRBNode.convertToNode(): RBNode<Int, V> =
-        RBNode(this.key, deserializeValue(this.value)).also {
+    private fun JsonRBNode.convertToNode(): RBNode<K, V> =
+        RBNode(deserializeKey(this.key), deserializeValue(this.value)).also {
             it.color = this.color
             it.left = this.left?.convertToNode()
             it.right = this.right?.convertToNode()
         }
 
-    private fun RBTree<Int, V>.convertToJson() = Json.encodeToString(JsonRBTree(root?.convertToJson()))
-    private fun RBNode<Int, V>.convertToJson(x: Int = 0, y: Int = 0): JsonRBNode =
+    private fun RBTree<K, V>.convertToJson() = Json.encodeToString(JsonRBTree(root?.convertToJson()))
+    private fun RBNode<K, V>.convertToJson(x: Int = 0, y: Int = 0): JsonRBNode =
         JsonRBNode(
             serializeValue(this.value),
-            this.key,
+            serializeKey(this.key),
             this.color,
             x,
             y,
