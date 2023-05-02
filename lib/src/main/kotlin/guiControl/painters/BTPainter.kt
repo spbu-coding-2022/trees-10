@@ -9,5 +9,5 @@ class BTPainter(
     nodeSize: Int,
     width: Int
 ) : AbstractPainter<BinaryNode<Int, Int>, BinaryTree<Int, Int>>(tree, nodeMargin, nodeSize, width) {
-    override fun getNodeColor(node: BinaryNode<Int, Int>): Color = Color.CYAN
+    override fun getNodeColor(node: BinaryNode<Int, Int>): Color = Color.DARK_GRAY
 }

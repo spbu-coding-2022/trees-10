@@ -10,5 +10,5 @@ class AVLPainter(
     nodeSize: Int,
     width: Int
 ) : AbstractPainter<AVLNode<Int, Int>, AVLTree<Int, Int>>(tree, nodeMargin, nodeSize, width) {
-    override fun getNodeColor(node: AVLNode<Int, Int>): Color = Color.ORANGE
+    override fun getNodeColor(node: AVLNode<Int, Int>): Color = Color.gray
 }
