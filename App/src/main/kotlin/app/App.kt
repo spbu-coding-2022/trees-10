@@ -1,6 +1,7 @@
 package app
 
 import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
 import guiClasses.components.Frame
 import guiClasses.components.KeyTextField
 import guiClasses.components.MenuClass
@@ -76,6 +77,27 @@ private fun menuFrameInit() {
 
     val removeButton = JButton("Remove")
     val removeTextField = KeyTextField()
+
+    removeButton.addActionListener {
+        if (removeTextField.text.toIntOrNull() != null) {
+            val key = removeTextField.text.toInt()
+            try {
+                when (currentTree) {
+                    TreeTypes.RB -> Trees.RBTree.remove(key)
+                    TreeTypes.BINARY -> Trees.binTree.remove(key)
+                    TreeTypes.AVL -> Trees.AVLTree.remove(key)
+
+                    else -> showError("Сначала выберите дерево", menuFrame)
+                }
+
+                treeInit(currentTree)
+
+            } catch (ex: NodeNotFoundException) {
+                showError("Узела с таким значением не существует", menuFrame)
+            }
+        } else
+            showError("Добавлять можно только узлы с числовыми значениями", menuFrame)
+    }
 
     val searchButton = JButton("Find")
     val searchTextField = JTextField("Test")
