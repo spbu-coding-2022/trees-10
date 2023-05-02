@@ -1,9 +1,11 @@
 package app
 
-import guiClasses.Frame
-import guiClasses.KeyTextField
-import guiClasses.MenuClass
-import guiClasses.RBTNodePanel
+import guiClasses.components.Frame
+import guiClasses.components.KeyTextField
+import guiClasses.components.MenuClass
+import guiClasses.components.nodePanels.AVLPanel
+import guiClasses.components.nodePanels.BTPanel
+import guiClasses.components.nodePanels.RBTPanel
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
@@ -11,10 +13,53 @@ import javax.swing.GroupLayout
 import javax.swing.JButton
 import javax.swing.JFrame
 
+/**
+ * Объект, хранящий отдельно каждое из деревьев
+ * (позволяет параллельно работать сразу со всеми)
+ */
+private object Trees {
+    val binTree: BinaryTree<Int, Int> = BinaryTree()
+    val AVLTree: AVLTree<Int, Int> = AVLTree()
+    val RBTree: RBTree<Int, Int> = RBTree()
+}
+
+/**
+ * Возможные виды деревьев, которые доступны пользователю
+ */
+private enum class TreeTypes {
+    BINARY,
+    AVL,
+    RB,
+    None
+}
+
+/**
+ * Дерево, выбранное пользователем на данный момент
+ */
+private var currentTree: TreeTypes = TreeTypes.None
+
 private lateinit var treeFrame: JFrame
 private lateinit var menuFrame: JFrame
 
-private lateinit var rbTree: RBTree<Int, Int>
+private fun rbtInit() {
+    currentTree = TreeTypes.RB
+
+    //here
+    Trees.RBTree.add(100)
+    Trees.RBTree.add(120)
+    Trees.RBTree.add(130)
+    treeFrame.add(RBTPanel(Trees.RBTree))
+}
+private fun binTreeInit() {
+    currentTree = TreeTypes.BINARY
+
+    treeFrame.add(BTPanel(Trees.binTree))
+}
+private fun avlInit() {
+    currentTree = TreeTypes.AVL
+
+    treeFrame.add(AVLPanel(Trees.AVLTree))
+}
 private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
@@ -29,21 +74,11 @@ private fun menuFrameInit() {
 
     val saveButton = JButton("Save")
 
-    val treeMenu = MenuClass { tree ->
-        when (tree) {
-            is BinaryTree<*, *> -> {
-                println("бинарное дерево")
-            }
-
-            is AVLTree<*, *> -> {
-                println("AVL дерево")
-            }
-
-            is RBTree<*, *> -> {
-                rbtDraw()
-            }
-        }
-    }
+    val treeMenu = MenuClass(
+        onBTSelected = ::binTreeInit,
+        onAVLSelected = ::avlInit,
+        onRBTSelected = ::rbtInit
+    )
 
     menuFrame.jMenuBar = treeMenu
 
@@ -103,36 +138,9 @@ private fun menuFrameInit() {
     )
 }
 
-private fun rbtDraw() {
-    rbTree = RBTree()
-    rbTree.add(100)
-    rbTree.add(0)
-    rbTree.add(120)
-    rbTree.add(130)
-    rbTree.add(140)
-    rbTree.add(3)
-    rbTree.add(15)
-    rbTree.add(17)
-
-    // Создаем панель с компонентами
-    val treePanel = RBTNodePanel(rbTree)
-
-//    val panel = JScrollPane()
-//    // Добавляем панель на панель с прокруткой
-//    panel.setViewportView(treePanel)
-//
-//    // Добавляем панель с прокруткой на окно
-//    treeFrame.contentPane.add(panel)
-//
-//    // Устанавливаем режим прокрутки по вертикали и горизонтали
-//    panel.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-//    panel.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
-//
-    treeFrame.add(treePanel)
-}
-
 fun main() {
     menuFrameInit()
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
-    rbtDraw()
+
+    rbtInit()
 }
