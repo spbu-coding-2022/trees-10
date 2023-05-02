@@ -1,4 +1,4 @@
-package guiClasses.view
+package guiControl
 
 import java.awt.Point
 
