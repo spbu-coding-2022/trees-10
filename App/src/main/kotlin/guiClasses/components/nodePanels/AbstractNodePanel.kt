@@ -7,10 +7,7 @@ import guiControl.painters.AbstractPainter
 import nodes.AbstractNode
 import nodes.RBNode
 import trees.AbstractTree
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
 import javax.swing.JPanel
 
 abstract class AbstractNodePanel<
@@ -67,6 +64,9 @@ abstract class AbstractNodePanel<
             Constants.nodeSize,
             Constants.nodeSize
         )
+
+        graphics.color = Color.BLACK
+        graphics.drawString(node.value, node.point.x - node.value.length * 4, node.point.y + Constants.nodeSize)
     }
 
     private fun drawLine(line: LineView) {
