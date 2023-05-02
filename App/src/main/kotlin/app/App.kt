@@ -69,7 +69,6 @@ fun main() {
             Trees.RBTree = base.loadTree()
         } catch (ex: Exception) {
             showError("Не удалось прочитать данных из файла ${Constants.RBTBaseName}", menuFrame)
-            showError(ex.message.toString(), menuFrame)
         }
     }
     if (File(Constants.BinaryBaseName).exists()) {
