@@ -13,6 +13,7 @@ import guiClasses.components.nodePanels.RBTPanel
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
+import java.io.File
 import javax.swing.GroupLayout
 import javax.swing.JButton
 import javax.swing.JFrame
@@ -23,9 +24,9 @@ import javax.swing.JOptionPane
  * (позволяет параллельно работать сразу со всеми)
  */
 private object Trees {
-    val binTree: BinaryTree<Int, Int> = BinaryTree()
-    val AVLTree: AVLTree<Int, Int> = AVLTree()
-    val RBTree: RBTree<Int, Int> = RBTree()
+    var binTree: BinaryTree<Int, Int> = BinaryTree()
+    var AVLTree: AVLTree<Int, Int> = AVLTree()
+    var RBTree: RBTree<Int, Int> = RBTree()
 }
 
 /**
@@ -38,6 +39,11 @@ enum class TreeTypes {
     None
 }
 
+object Constants {
+    const val BinaryBaseName = "Binary Tree Data.db"
+    const val RBTBaseName = "Red-Black Tree Data.yml"
+}
+
 /**
  * Дерево, выбранное пользователем на данный момент
  */
@@ -47,6 +53,42 @@ private lateinit var treeFrame: JFrame
 private lateinit var menuFrame: JFrame
 fun main() {
     menuFrameInit()
+
+    if (File(Constants.RBTBaseName).exists()) {
+        try {
+            val base = RBTBase(Constants.RBTBaseName,
+                serializeValue = { value -> value?.toString() ?: "null" },
+                deserializeValue = { value ->
+                    if (value == "null")
+                        0
+                    else
+                        value.toInt()
+                },
+                deserializeKey = { value -> value.toInt() })
+
+            Trees.RBTree = base.loadTree()
+        } catch (ex: Exception) {
+            showError("Не удалось прочитать данных из файла ${Constants.RBTBaseName}", menuFrame)
+            showError(ex.message.toString(), menuFrame)
+        }
+    }
+    if (File(Constants.BinaryBaseName).exists()) {
+        try {
+            val base = BTBase(Constants.BinaryBaseName,
+                serializeValue = { value -> value?.toString() ?: "null" },
+                deserializeValue = { value ->
+                    if (value == "null")
+                        0
+                    else
+                        value.toInt()
+                },
+                deserializeKey = { value -> value.toInt() })
+
+            Trees.binTree = base.loadTree()
+        } catch (ex: Exception) {
+            showError("Не удалось прочитать данных из файла ${Constants.BinaryBaseName}", menuFrame)
+        }
+    }
 }
 
 private fun treeInit(newTree: TreeTypes) {
@@ -63,9 +105,11 @@ private fun treeInit(newTree: TreeTypes) {
     currentTree = newTree
 
 }
+
 private fun showError(text: String, frame: JFrame) {
-    JOptionPane.showMessageDialog(frame, text, "Произошла ошибка" , JOptionPane.ERROR_MESSAGE)
+    JOptionPane.showMessageDialog(frame, text, "Произошла ошибка", JOptionPane.ERROR_MESSAGE)
 }
+
 private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
@@ -123,22 +167,41 @@ private fun menuFrameInit() {
     saveButton.addActionListener {
         when (currentTree) {
             TreeTypes.BINARY -> {
-                val base = BTBase("BinaryTree.db", deserializeValue = {value -> value.toInt()}, deserializeKey = { value -> value.toInt() })
+                val base = BTBase(Constants.BinaryBaseName,
+                    serializeValue = { value -> value?.toString() ?: "null" },
+                    deserializeValue = { value ->
+                        if (value == "null")
+                            0
+                        else
+                            value.toInt()
+                    },
+                    deserializeKey = { value -> value.toInt() })
                 base.saveTree(Trees.binTree)
             }
+
             TreeTypes.RB -> {
-                val base = RBTBase("Red-Black Tree.db", deserializeValue = {value -> value.toInt()}, deserializeKey = { value -> value.toInt() })
+                val base = RBTBase(
+                    Constants.RBTBaseName,
+                    serializeValue = { value -> value?.toString() ?: "null" },
+                    deserializeValue = { value ->
+                        if (value == "null")
+                            0
+                        else
+                            value.toInt()
+                    },
+                    deserializeKey = { value -> value.toInt() })
                 base.saveTree(Trees.RBTree)
             }
-            TreeTypes.AVL -> {
 
+            TreeTypes.AVL -> {
+                showError("Сохранение AVL дерева не реализовано", menuFrame)
             }
 
             else -> showError("Сначала выберите дерево", menuFrame)
         }
     }
 
-    menuFrame.jMenuBar = MenuClass (::treeInit)
+    menuFrame.jMenuBar = MenuClass(::treeInit)
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
