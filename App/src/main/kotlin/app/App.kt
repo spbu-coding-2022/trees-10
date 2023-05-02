@@ -1,5 +1,7 @@
 package app
 
+import databases.json.RBTBase
+import databases.sqlite.BTBase
 import exceptions.NodeAlreadyExistsException
 import exceptions.NodeNotFoundException
 import guiClasses.components.Frame
@@ -11,7 +13,10 @@ import guiClasses.components.nodePanels.RBTPanel
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
-import javax.swing.*
+import javax.swing.GroupLayout
+import javax.swing.JButton
+import javax.swing.JFrame
+import javax.swing.JOptionPane
 
 /**
  * Объект, хранящий отдельно каждое из деревьев
@@ -41,15 +46,28 @@ private var currentTree: TreeTypes = TreeTypes.None
 private lateinit var treeFrame: JFrame
 private lateinit var menuFrame: JFrame
 fun main() {
-    menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
     menuFrameInit()
-    treeFrame = Frame("Treeple", 1000, 700, 360, 50)
 }
 
+private fun treeInit(newTree: TreeTypes) {
+    if (::treeFrame.isInitialized)
+        treeFrame.dispose()
+    treeFrame = Frame("Treeple", 1000, 700, 360, 50)
+    when (newTree) {
+        TreeTypes.RB -> treeFrame.add(RBTPanel(Trees.RBTree))
+        TreeTypes.AVL -> treeFrame.add(AVLPanel(Trees.AVLTree))
+        TreeTypes.BINARY -> treeFrame.add(BTPanel(Trees.binTree))
+        else -> return
+    }
+    println(newTree)
+    currentTree = newTree
+
+}
 private fun showError(text: String, frame: JFrame) {
     JOptionPane.showMessageDialog(frame, text, "Произошла ошибка" , JOptionPane.ERROR_MESSAGE)
 }
 private fun menuFrameInit() {
+    menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
     val addButton = JButton("Add")
     val addTextField = KeyTextField()
@@ -65,8 +83,6 @@ private fun menuFrameInit() {
 
                     else -> showError("Сначала выберите дерево", menuFrame)
                 }
-
-                treeInit(currentTree)
 
             } catch (ex: NodeAlreadyExistsException) {
                 showError("Узел с таким значением уже существует", menuFrame)
@@ -90,19 +106,37 @@ private fun menuFrameInit() {
                     else -> showError("Сначала выберите дерево", menuFrame)
                 }
 
-                treeInit(currentTree)
-
             } catch (ex: NodeNotFoundException) {
-                showError("Узела с таким значением не существует", menuFrame)
+                showError("Узла с таким значением не существует", menuFrame)
             }
         } else
             showError("Добавлять можно только узлы с числовыми значениями", menuFrame)
     }
 
-    val searchButton = JButton("Find")
-    val searchTextField = JTextField("Test")
-
     val saveButton = JButton("Save")
+    val refreshButton = JButton("Refresh")
+
+    refreshButton.addActionListener {
+        treeInit(currentTree)
+    }
+
+    saveButton.addActionListener {
+        when (currentTree) {
+            TreeTypes.BINARY -> {
+                val base = BTBase("BinaryTree.db", deserializeValue = {value -> value.toInt()}, deserializeKey = { value -> value.toInt() })
+                base.saveTree(Trees.binTree)
+            }
+            TreeTypes.RB -> {
+                val base = RBTBase("Red-Black Tree.db", deserializeValue = {value -> value.toInt()}, deserializeKey = { value -> value.toInt() })
+                base.saveTree(Trees.RBTree)
+            }
+            TreeTypes.AVL -> {
+
+            }
+
+            else -> showError("Сначала выберите дерево", menuFrame)
+        }
+    }
 
     menuFrame.jMenuBar = MenuClass (::treeInit)
 
@@ -122,16 +156,15 @@ private fun menuFrameInit() {
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(addButton)
                             .addComponent(removeButton)
-                            .addComponent(searchButton)
                     )
                     .addGroup( // Группа с TextFields
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(addTextField)
                             .addComponent(removeTextField)
-                            .addComponent(searchTextField)
                     )
             )
             .addComponent(saveButton)
+            .addComponent(refreshButton)
     )
 
     layout.setVerticalGroup(
@@ -148,30 +181,13 @@ private fun menuFrameInit() {
                     .addComponent(removeTextField)
             )
 
-            .addGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchButton)
-                    .addComponent(searchTextField)
-            )
 
             .addGroup(
                 layout.createSequentialGroup()
                     .addComponent(saveButton)
+                    .addComponent(refreshButton)
             )
 
     )
-
-}
-private fun treeInit(newTree: TreeTypes) {
-    treeFrame.dispose()
-    treeFrame = Frame("Treeple", 1000, 700, 360, 50)
-    when (newTree) {
-        TreeTypes.RB -> treeFrame.add(RBTPanel(Trees.RBTree))
-        TreeTypes.AVL -> treeFrame.add(AVLPanel(Trees.AVLTree))
-        TreeTypes.BINARY -> treeFrame.add(BTPanel(Trees.binTree))
-        else -> return
-    }
-    println(newTree)
-    currentTree = newTree
 
 }
