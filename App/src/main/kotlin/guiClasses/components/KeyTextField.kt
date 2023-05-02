@@ -1,7 +1,5 @@
-package guiClasses
+package guiClasses.components
 
-import java.awt.Font
-import java.awt.event.ActionListener
 import javax.swing.JTextField
 
 class KeyTextField() : JTextField() {

@@ -1,4 +1,4 @@
-package guiClasses
+package guiClasses.components
 
 import trees.AVLTree
 import trees.BinaryTree

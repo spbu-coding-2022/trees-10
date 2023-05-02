@@ -1,4 +1,4 @@
-package guiClasses
+package guiClasses.components
 
 import exceptions.NullNodeException
 import nodes.Color
@@ -46,7 +46,6 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
             recursiveDraw(tree.treeRoot ?: throw NullNodeException(), rootX, Constants.nodeMargin)
         }
     }
-
 
     /**
      * Рекурсивная отрисовка каждой ноды дерева
