@@ -52,7 +52,6 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
      * Рекурсивная отрисовка каждой ноды дерева
      */
     private fun recursiveDraw(node: RBNode<Int, Int>, x: Int, y: Int, n: Int = 1) {
-
         var nextX: Int
         var nextY: Int
 
@@ -80,7 +79,7 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
                 node.right ?: throw NullNodeException(),
                 nextX,
                 nextY,
-                n+1
+                2*n+1
             )
         }                   //рекурсивно рисуем правое поддерево
 
