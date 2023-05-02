@@ -12,6 +12,7 @@ import trees.RBTree
 import javax.swing.GroupLayout
 import javax.swing.JButton
 import javax.swing.JFrame
+import javax.swing.JTextField
 
 /**
  * Объект, хранящий отдельно каждое из деревьев
@@ -24,9 +25,9 @@ private object Trees {
 }
 
 /**
- * Возможные виды деревьев, которые доступны пользователю
+ * Возможные виды деревьев, которые доступны пользователю RBTree
  */
-private enum class TreeTypes {
+enum class TreeTypes {
     BINARY,
     AVL,
     RB,
@@ -40,40 +41,12 @@ private var currentTree: TreeTypes = TreeTypes.None
 
 private lateinit var treeFrame: JFrame
 private lateinit var menuFrame: JFrame
-
-private val rbtPanel = RBTPanel(Trees.RBTree)
-private val avlPanel = AVLPanel(Trees.AVLTree)
-private val binPanel = BTPanel(Trees.binTree)
-
-private fun curPanelRemove() {
-    when(currentTree) {
-        TreeTypes.BINARY -> treeFrame.remove(binPanel)
-        TreeTypes.AVL -> treeFrame.remove(avlPanel)
-        TreeTypes.RB -> treeFrame.remove(rbtPanel)
-        else -> return
-    }
-
-}
-private fun rbtInit() {
-    curPanelRemove()
-    currentTree = TreeTypes.RB
-
-    treeFrame.add(rbtPanel)
-}
-private fun binTreeInit() {
-    curPanelRemove()
-    currentTree = TreeTypes.BINARY
-
-    treeFrame.add(binPanel)
-}
-private fun avlInit() {
-    curPanelRemove()
-    currentTree = TreeTypes.AVL
-
-    treeFrame.add(avlPanel)
+fun main() {
+    menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
+    menuFrameInit()
+    treeFrame = Frame("Treeple", 1000, 700, 360, 50)
 }
 private fun menuFrameInit() {
-    menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
     val addButton = JButton("Add")
     val addTextField = KeyTextField()
@@ -82,17 +55,11 @@ private fun menuFrameInit() {
     val removeTextField = KeyTextField()
 
     val searchButton = JButton("Find")
-    val searchTextField = KeyTextField()
+    val searchTextField = JTextField("Test")
 
     val saveButton = JButton("Save")
 
-    val treeMenu = MenuClass(
-        onBTSelected = ::binTreeInit,
-        onAVLSelected = ::avlInit,
-        onRBTSelected = ::rbtInit
-    )
-
-    menuFrame.jMenuBar = treeMenu
+    menuFrame.jMenuBar = MenuClass (::treeInit)
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
@@ -149,8 +116,16 @@ private fun menuFrameInit() {
 
     )
 }
-
-fun main() {
-    menuFrameInit()
+private fun treeInit(newTree: TreeTypes) {
+    treeFrame.dispose()
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
+    when (newTree) {
+        TreeTypes.RB -> treeFrame.add(RBTPanel(Trees.RBTree))
+        TreeTypes.AVL -> treeFrame.add(AVLPanel(Trees.AVLTree))
+        TreeTypes.BINARY -> treeFrame.add(BTPanel(Trees.binTree))
+        else -> return
+    }
+    println(newTree)
+    currentTree = newTree
+
 }
