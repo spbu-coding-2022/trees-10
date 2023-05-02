@@ -1,8 +1,10 @@
 package trees
 
+import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
+import exceptions.NullNodeException
 import nodes.Color
 import nodes.RBNode
-import exceptions.*
 
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
@@ -54,40 +56,58 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     private fun removeNode(node: RBNode<K, V>) {
-        val replacementNode = when {                //объявляем ноду, которая заменит удаяемую
-            node.left == null -> node.right         //если один ребенок
-            node.right == null -> node.left
-            else -> {                               //если два ребенка
-                var successor = node.right
-                while (successor?.left != null) {   //ищем самого левого потомка правого ребенка удаляемой ноды
-                    successor = successor.left
+        var y: RBNode<K, V>
+        var replaceNode: RBNode<K, V>
+        var yOriginalColor = node.color
+        if (node.right != null || node.left != null) {
+            if (node.left == null) {
+                replaceNode = node.right ?: throw NullNodeException()
+                transplant(node, node.right)
+            } else if (node.right == null) {
+                replaceNode = node.left ?: throw NullNodeException()
+                transplant(node, node.left)
+            } else {
+                y = node.right ?: throw NullNodeException()
+                while (y.left != null) {
+                    y = y.left!!
                 }
-                if (successor?.parent != node) {    //если у правого ребенка удаляемой ноды есть дети
-                    transplant(successor ?: throw IllegalArgumentException("Node cannot be null"), successor.right)
-                    successor.right = node.right
-                    successor.right?.parent = successor
+                yOriginalColor = y.color
+                replaceNode = if (y.right == null) {
+                    y
+                } else {
+                    y.right ?: throw NullNodeException()
                 }
-                transplant(node, successor)
-                successor.left = node.left
-                successor.left?.parent = successor
-                successor.color = node.color
-                successor
+                if (replaceNode == y) {
+                    replaceNode.parent = y.parent
+                } else {
+                    if (y.parent == node) {
+                        replaceNode.parent = y
+                    } else {
+                        transplant(y, y.right)
+                        y.right = node.right
+                        y.right?.parent = y
+                        replaceNode.parent = y.parent
+                    }
+                }
+                transplant(node, y)
+                y.left = node.left
+                y.left?.parent = y
+                y.color = node.color
+            }
+            if (yOriginalColor == Color.BLACK) {
+                fixDelete(replaceNode)
+            }
+        } else {
+            if (node.parent == null) {
+                root = null
+            } else {
+                if (node.parent?.left == node) {
+                    node.parent?.left = null
+                } else {
+                    node.parent?.right = null
+                }
             }
         }
-
-        if (node.color == Color.BLACK) {
-            fixDelete(replacementNode)
-        }
-
-        if (node.parent == null) {
-            root = replacementNode
-        } else if (node == (node.parent as RBNode<K, V>).left) {
-            (node.parent as RBNode<K, V>).left = replacementNode
-        } else {
-            (node.parent as RBNode<K, V>).right = replacementNode
-        }
-
-        replacementNode?.parent = node.parent
     }
 
     private fun fixInsert(node: RBNode<K, V>) {
@@ -131,59 +151,60 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     private fun fixDelete(node: RBNode<K, V>?) {
-        var currentNode = node
-        while (currentNode != root && currentNode?.color == Color.BLACK) {  //пока нода не корень и она черная
-            if (currentNode == currentNode.parent?.left) {                  //если нода - левый сын
-                var sibling = currentNode.parent?.right
-                if (sibling?.color == Color.RED) {                          //если брат - красный
-                    sibling.color = Color.BLACK
-                    currentNode.parent?.color = Color.RED
-                    currentNode.parent?.let { leftRotate(it) }
-                    sibling = currentNode.parent?.right
+        var x = node
+        while (x != root && x?.color == Color.BLACK) {
+            if (x == x.parent!!.left) {
+                var w = x.parent!!.right ?: throw NullNodeException()
+                if (w.color == Color.RED) {
+                    w.color = Color.BLACK
+                    x.parent!!.color = Color.RED
+                    leftRotate(x.parent!!)
+                    w = x.parent!!.right ?: throw NullNodeException()
                 }
-                if (sibling?.left?.color == Color.BLACK && sibling.right?.color == Color.BLACK) {   //если дети брата черные
-                    sibling.color = Color.RED
-                    currentNode = currentNode.parent
+                if ((w.left?.color ?: Color.BLACK) == Color.BLACK && (w.right?.color ?: Color.BLACK) == Color.BLACK) {
+                    w.color = Color.RED
+                    x = x.parent!!
                 } else {
-                    if (sibling?.right?.color == Color.BLACK) {     //левый сын брата красный, правый - черный
-                        sibling.left?.color = Color.BLACK
-                        sibling.color = Color.RED
-                        sibling.let { rightRotate(it) }
-                        sibling = currentNode.parent?.right
+                    if ((w.right?.color ?: Color.BLACK) == Color.BLACK) {
+                        w.left?.color = Color.BLACK
+                        w.color = Color.RED
+                        rightRotate(w)
+                        w = x.parent!!.right ?: throw NullNodeException()
                     }
-                    sibling?.color = currentNode.parent?.color ?: throw TreeException("Parent color is null")
-                    currentNode.parent?.color = Color.BLACK
-                    sibling?.right?.color = Color.BLACK
-                    currentNode.parent?.let { leftRotate(it) }
-                    currentNode = root
+                    w.color = x.parent!!.color
+                    x.parent!!.color = Color.BLACK
+                    w.right?.color = Color.BLACK
+                    leftRotate(x.parent!!)
+                    x = root ?: throw NullNodeException()
                 }
-            } else {                                            //нода - правый сын
-                var sibling = currentNode.parent?.left
-                if (sibling?.color == Color.RED) {              //если брат - красный
-                    sibling.color = Color.BLACK
-                    currentNode.parent?.color = Color.RED
-                    currentNode.parent?.let { rightRotate(it) }
-                    sibling = currentNode.parent?.left
+            } else {
+                var w = x.parent!!.left ?: throw NullNodeException()
+                if (w.color == Color.RED) {
+                    w.color = Color.BLACK
+                    x.parent!!.color = Color.RED
+                    rightRotate(x.parent!!)
+                    w = x.parent!!.left ?: throw NullNodeException()
                 }
-                if (sibling?.right?.color == Color.BLACK && sibling.left?.color == Color.BLACK) { //дети брата черные
-                    sibling.color = Color.RED
-                    currentNode = currentNode.parent
+                if ((w.right?.color ?: Color.BLACK) == Color.BLACK && (w.left?.color ?: Color.BLACK) == Color.BLACK) {
+                    w.color = Color.RED
+                    x = x.parent!!
                 } else {
-                    if (sibling?.left?.color == Color.BLACK) {  //левый сын брата черный, правый - красный
-                        sibling.right?.color = Color.BLACK
-                        sibling.color = Color.RED
-                        sibling.let { leftRotate(it) }
-                        sibling = currentNode.parent?.left
+                    if ((w.left?.color ?: Color.BLACK) == Color.BLACK) {
+                        w.right?.color = Color.BLACK
+                        w.color = Color.RED
+                        leftRotate(w)
+                        w = x.parent!!.left ?: throw NullNodeException()
                     }
-                    sibling?.color = currentNode.parent?.color ?: throw TreeException("Parent color is null")
-                    currentNode.parent?.color = Color.BLACK
-                    sibling?.left?.color = Color.BLACK
-                    currentNode.parent?.let { rightRotate(it) }
-                    currentNode = root
+                    w.color = x.parent!!.color
+                    x.parent!!.color = Color.BLACK
+                    w.left?.color = Color.BLACK
+                    rightRotate(x.parent!!)
+                    x = root ?: throw NullNodeException()
                 }
             }
         }
-        currentNode?.color = Color.BLACK
+        x?.color = Color.BLACK
+        root?.color = Color.BLACK
     }
 
 
