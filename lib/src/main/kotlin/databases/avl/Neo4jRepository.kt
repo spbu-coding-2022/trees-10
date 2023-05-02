@@ -8,6 +8,7 @@ import org.neo4j.ogm.cypher.Filter
 import org.neo4j.ogm.cypher.Filters
 import org.neo4j.ogm.session.SessionFactory
 import trees.AVLTree
+import java.awt.Point
 
 @NodeEntity
 class AVLNodeEntity(
@@ -21,17 +22,17 @@ class AVLNodeEntity(
     var height: Int,
 
     @Property
-    var x: Double = 0.0,
+    var x: Int = 0,
 
     @Property
-    var y: Double = 0.0,
+    var y: Int = 0,
 
     @Relationship(type = "LEFT")
     var left: AVLNodeEntity? = null,
 
     @Relationship(type = "RIGHT")
     var right: AVLNodeEntity? = null,
-){
+) {
     @Id
     @GeneratedValue
     var id: Long? = null
@@ -44,13 +45,13 @@ class AVLTreeEntity(
 
     @Relationship(type = "ROOT")
     var root: AVLNodeEntity? = null,
-){
+) {
     @Id
     @GeneratedValue
     var id: Long? = null
 }
 
-class Neo4jRepository<K: Comparable<K>, V>(
+class Neo4jRepository<K : Comparable<K>, V>(
     uri: String,
     username: String,
     password: String,
@@ -67,14 +68,14 @@ class Neo4jRepository<K: Comparable<K>, V>(
     private val sessionFactory = SessionFactory(configuration, "databases.avl")
     private val session = sessionFactory.openSession()
 
-    private fun AVLTree<K, V>.toEntity(name: String) : AVLTreeEntity {
+    private fun AVLTree<K, V>.toEntity(name: String = "Default"): AVLTreeEntity {
         return AVLTreeEntity(
             name,
             root?.toEntity()
         )
     }
 
-    private fun AVLNode<K, V>.toEntity(x: Double = 0.0, y: Double = 0.0) : AVLNodeEntity{
+    private fun AVLNode<K, V>.toEntity(x: Int = 0, y: Int = 0): AVLNodeEntity {
         return AVLNodeEntity(
             serializeKey(key),
             serializeValue(value),
@@ -92,7 +93,7 @@ class Neo4jRepository<K: Comparable<K>, V>(
         }
     }
 
-    private fun AVLNodeEntity.toNode() : AVLNode<K, V> {
+    private fun AVLNodeEntity.toNode(): AVLNode<K, V> {
         return AVLNode(deserializeKey(key), deserializeValue(value)).also {
             it.left = this.left?.toNode()
             it.right = this.right?.toNode()
@@ -100,27 +101,64 @@ class Neo4jRepository<K: Comparable<K>, V>(
         }
     }
 
-    private fun findTree(name: String) = session.loadAll(
+    private fun findTree(name: String = "Default") = session.loadAll(
         AVLTreeEntity::class.java,
-        Filter("name", ComparisonOperator.EQUALS, name), -1)
+        Filter("name", ComparisonOperator.EQUALS, name), -1
+    )
 
-    fun saveTree(tree: AVLTree<K, V>, name: String) {
+    fun saveTree(tree: AVLTree<K, V>, name: String = "Default") {
         deleteTree(name)
         session.save(tree.toEntity(name))
     }
 
-
-    fun loadTree(name: String): AVLTree<K, V>? {
+    fun loadTree(name: String = "Default"): AVLTree<K, V>? {
         val treeEntity = findTree(name).singleOrNull()
 
         return treeEntity?.toTree()
     }
 
-    fun deleteTree(name: String) {
+    fun deleteTree(name: String = "Default") {
         session.query(
-            "MATCH (t: AVLTreeEntity {name: \$name})-[*0..]-(x)" +
-                    "DETACH DELETE x",
+    "MATCH (t: AVLTreeEntity {name: \$name})-[*0..]-(x)" +
+            "DETACH DELETE x",
             mapOf("name" to name)
         )
     }
+
+    fun getPoint(key: K, name: String = "Default"): Point {
+        val node = session.queryForObject(AVLNodeEntity::class.java,
+        "MATCH(t:AVLTreeEntity {name: \$name})" +
+            "MATCH(n:AVLNodeEntity {key: \$key})<-[*0..]-(t)" +
+            "return n",
+            mapOf("name" to name, "key" to serializeKey(key))
+        )
+
+        return Point(node.x, node.y)
+    }
+
+    fun setPoint(key: K, point: Point, name: String = "Default") {
+        session.query(
+        "MATCH(t:AVLTreeEntity {name: \$name})" +
+            "MATCH(n:AVLNodeEntity {key: \$key})<-[*0..]-(t)" +
+            "SET n.x = \$x, n.y = \$y",
+            mapOf("name" to name, "key" to serializeKey(key), "x" to point.x, "y" to point.y)
+        )
+    }
+
+    /*fun setPoint(key: K, p: Point) {
+        val savedTree = Json.decodeFromString<JsonRBTree>(file.readText())
+
+        if (savedTree.root?.changeCoordinate(key, p) != true)
+            throw NodeNotFoundException()
+
+        file.printWriter().use { out ->
+            out.write(Json.encodeToString(savedTree))
+        }
+
+    }
+
+    fun getPoint(key: K): Point {
+        return Json.decodeFromString<JsonRBTree>(file.readText()).root?.searchCoordinate(key)
+            ?: throw NodeNotFoundException()
+    }*/
 }
