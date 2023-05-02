@@ -111,6 +111,9 @@ private fun rbtDraw() {
     rbTree.add(130)
     rbTree.add(140)
     rbTree.add(3)
+    rbTree.add(15)
+    rbTree.add(17)
+
     // Создаем панель с компонентами
     val treePanel = RBTNodePanel(rbTree)
 

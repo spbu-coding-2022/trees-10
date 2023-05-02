@@ -4,10 +4,7 @@ import exceptions.NullNodeException
 import nodes.Color
 import nodes.RBNode
 import trees.RBTree
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
 import javax.swing.JPanel
 
 class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
@@ -22,6 +19,8 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
             ?: throw NullPointerException()
     }
 
+    private lateinit var graphics: Graphics
+
     init {
         preferredSize = Dimension(1000, 700)
     }
@@ -30,7 +29,7 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
         super.paintComponent(g)
 
         // Сглаживание
-        (g as Graphics2D).also {
+        graphics = (g as Graphics2D).also {
             val rh = RenderingHints(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON
@@ -40,7 +39,11 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
 
         if (tree.treeRoot != null) {
             val rootX = width / 2 // нода рисуется посередине
-            drawNode(g, tree.treeRoot ?: throw NullNodeException(), rootX, Constants.nodeMargin)
+            val rootY = Constants.nodeMargin
+
+            drawNode(tree.treeRoot?: throw NullNodeException(), Point(rootX, rootY))
+
+            recursiveDraw(tree.treeRoot ?: throw NullNodeException(), rootX, Constants.nodeMargin)
         }
     }
 
@@ -48,43 +51,59 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
     /**
      * Рекурсивная отрисовка каждой ноды дерева
      */
-    private fun drawNode(g: Graphics, node: RBNode<Int, Int>, x: Int, y: Int) {
-        // Устанавливаем цвет рисуемой ноды как у переданной
-        g.color = if (node.color == Color.BLACK)
+    private fun recursiveDraw(root: RBNode<Int, Int>, x: Int, y: Int, n: Int = 1) {
+        var nextX: Int
+        var nextY: Int
+
+        if (root.left != null) {
+            nextX = x - (x / (2 * n))
+            nextY = y + Constants.nodeMargin + Constants.nodeSize
+
+            drawLine(Point(x, y), Point(nextX, nextY))
+            drawNode(root, Point(nextX, nextY))
+
+            recursiveDraw(
+                root.left ?: throw NullNodeException(),
+                nextX,
+                nextY,
+                n + 1
+            )
+        }                   //рекурсивно рисуем левое поддерево, shl - побитовый сдвиг влево
+        if (root.right != null) {
+
+            nextX = x + (x / (2 * n))
+            nextY = y + Constants.nodeMargin + Constants.nodeSize
+
+            drawLine(Point(x, y), Point(nextX, nextY))
+            drawNode(root, Point(nextX, nextY))
+
+            recursiveDraw(
+                root.right ?: throw NullNodeException(),
+                nextX,
+                nextY,
+                2 * n + 1
+            )
+        }                   //рекурсивно рисуем правое поддерево
+    }
+
+    private fun drawNode(node: RBNode<Int, Int>, p: Point) {
+        graphics.color = if (node.color == Color.BLACK)
             java.awt.Color.BLACK
         else
             java.awt.Color.RED
 
         // Рисуем овал (ноду)
-        g.fillOval(x - Constants.nodeSize / 2, y - Constants.nodeSize / 2, Constants.nodeSize, Constants.nodeSize)
-        g.color = Constants.lineColor //Обводка овала
+        graphics.fillOval(
+            p.x - Constants.nodeSize / 2,
+            p.y - Constants.nodeSize / 2,
+            Constants.nodeSize,
+            Constants.nodeSize
+        )
+    }
 
-        if (node.left != null) {
-            val nextX = x - Constants.nodeMargin - Constants.nodeSize
-            val nextY = y + Constants.nodeMargin + Constants.nodeSize
-
-            g.drawLine(x, y, nextX, nextY)
-
-            drawNode(
-                g,
-                node.left ?: throw NullNodeException(),
-                nextX,
-                nextY
-            )
-        }                   //рекурсивно рисуем левое поддерево, shl - побитовый сдвиг влево
-        if (node.right != null) {
-            val nextX = x + Constants.nodeMargin + Constants.nodeSize
-            val nextY = y + Constants.nodeMargin + Constants.nodeSize
-
-            g.drawLine(x, y, nextX, nextY)
-
-            drawNode(
-                g,
-                node.right ?: throw NullNodeException(),
-                nextX,
-                nextY
-            )
-        }                   //рекурсивно рисуем правое поддерево
+    private fun drawLine(start: Point, end: Point) {
+        graphics.color = Constants.lineColor
+        graphics.drawLine(start.x, start.y, end.x, end.y)
     }
 
     private fun getHeight(node: RBNode<Int, Int>): Int =
