@@ -19,9 +19,8 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
         if (tree.root == null) {
             // Если дерево ещё не заполнено, то заполним его "образцом"
             tree.add(100)
-            tree.add(150)
-            tree.add(120)
             tree.add(-10)
+            tree.add(120)
         }
         getViewNodes(tree.root ?: throw NullNodeException(), width / 2, nodeMargin)
 

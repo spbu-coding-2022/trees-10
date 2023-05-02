@@ -41,24 +41,36 @@ private var currentTree: TreeTypes = TreeTypes.None
 private lateinit var treeFrame: JFrame
 private lateinit var menuFrame: JFrame
 
+private val rbtPanel = RBTPanel(Trees.RBTree)
+private val avlPanel = AVLPanel(Trees.AVLTree)
+private val binPanel = BTPanel(Trees.binTree)
+
+private fun curPanelRemove() {
+    when(currentTree) {
+        TreeTypes.BINARY -> treeFrame.remove(binPanel)
+        TreeTypes.AVL -> treeFrame.remove(avlPanel)
+        TreeTypes.RB -> treeFrame.remove(rbtPanel)
+        else -> return
+    }
+
+}
 private fun rbtInit() {
+    curPanelRemove()
     currentTree = TreeTypes.RB
 
-    //here
-    Trees.RBTree.add(100)
-    Trees.RBTree.add(120)
-    Trees.RBTree.add(130)
-    treeFrame.add(RBTPanel(Trees.RBTree))
+    treeFrame.add(rbtPanel)
 }
 private fun binTreeInit() {
+    curPanelRemove()
     currentTree = TreeTypes.BINARY
 
-    treeFrame.add(BTPanel(Trees.binTree))
+    treeFrame.add(binPanel)
 }
 private fun avlInit() {
+    curPanelRemove()
     currentTree = TreeTypes.AVL
 
-    treeFrame.add(AVLPanel(Trees.AVLTree))
+    treeFrame.add(avlPanel)
 }
 private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
@@ -141,6 +153,4 @@ private fun menuFrameInit() {
 fun main() {
     menuFrameInit()
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
-
-    rbtInit()
 }
