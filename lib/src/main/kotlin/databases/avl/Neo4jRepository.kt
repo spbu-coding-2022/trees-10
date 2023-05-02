@@ -3,16 +3,22 @@ package databases.avl
 import nodes.AVLNode
 import org.neo4j.ogm.annotation.*
 import org.neo4j.ogm.config.Configuration
+import org.neo4j.ogm.cypher.ComparisonOperator
+import org.neo4j.ogm.cypher.Filter
+import org.neo4j.ogm.cypher.Filters
 import org.neo4j.ogm.session.SessionFactory
 import trees.AVLTree
 
 @NodeEntity
-class AVLNodeEntity<K, V>(
+class AVLNodeEntity(
     @Property
-    val key: K,
+    val key: String,
 
     @Property
-    var value: V?,
+    var value: String?,
+
+    @Property
+    var height: Int,
 
     @Property
     var x: Double = 0.0,
@@ -21,10 +27,10 @@ class AVLNodeEntity<K, V>(
     var y: Double = 0.0,
 
     @Relationship(type = "LEFT")
-    var left: AVLNodeEntity<K, V>? = null,
+    var left: AVLNodeEntity? = null,
 
     @Relationship(type = "RIGHT")
-    var right: AVLNodeEntity<K, V>? = null,
+    var right: AVLNodeEntity? = null,
 ){
     @Id
     @GeneratedValue
@@ -32,19 +38,27 @@ class AVLNodeEntity<K, V>(
 }
 
 @NodeEntity
-class AVLTreeEntity<K, V>(
+class AVLTreeEntity(
     @Property
     var name: String,
 
     @Relationship(type = "ROOT")
-    var root: AVLNodeEntity<K, V>? = null,
+    var root: AVLNodeEntity? = null,
 ){
     @Id
     @GeneratedValue
     var id: Long? = null
 }
 
-class Neo4jRepository<K: Comparable<K>, V>(uri: String, username: String, password: String) {
+class Neo4jRepository<K: Comparable<K>, V>(
+    uri: String,
+    username: String,
+    password: String,
+    private val serializeKey: (key: K) -> String = { value -> value.toString() },
+    private val deserializeKey: (strKey: String) -> K,
+    private val serializeValue: (value: V?) -> String = { value -> value.toString() },
+    private val deserializeValue: (strValue: String?) -> V?
+) {
     private val configuration: Configuration = Configuration.Builder()
         .uri(uri)
         .credentials(username, password)
@@ -53,31 +67,53 @@ class Neo4jRepository<K: Comparable<K>, V>(uri: String, username: String, passwo
     private val sessionFactory = SessionFactory(configuration, "databases.avl")
     private val session = sessionFactory.openSession()
 
-    private fun AVLTree<K, V>.toEntity(name: String) : AVLTreeEntity<K, V> {
-        return AVLTreeEntity<K, V>(
+    private fun AVLTree<K, V>.toEntity(name: String) : AVLTreeEntity {
+        return AVLTreeEntity(
             name,
             root?.toEntity()
         )
     }
 
-    private fun AVLNode<K, V>.toEntity() : AVLNodeEntity<K, V>{
-        return AVLNodeEntity<K, V>(
-            key,
-            value,
-            0.0, //Нужен класс который смог бы хранить эти координаты
-            0.0,
+    private fun AVLNode<K, V>.toEntity(x: Double = 0.0, y: Double = 0.0) : AVLNodeEntity{
+        return AVLNodeEntity(
+            serializeKey(key),
+            serializeValue(value),
+            height,
+            x,
+            y,
             left?.toEntity(),
             right?.toEntity()
         )
     }
+
+    private fun AVLTreeEntity.toTree(): AVLTree<K, V> {
+        return AVLTree<K, V>().also {
+            it.root = this.root?.toNode()
+        }
+    }
+
+    private fun AVLNodeEntity.toNode() : AVLNode<K, V> {
+        return AVLNode(deserializeKey(key), deserializeValue(value)).also {
+            it.left = this.toNode()
+            it.right = this.toNode()
+            it.height = this.height
+        }
+    }
+
+    private fun findTree(name: String) = session.loadAll(
+        AVLTreeEntity::class.java,
+        Filter("name", ComparisonOperator.EQUALS, name), -1)
 
     fun saveTree(tree: AVLTree<K, V>, name: String) {
         deleteTree(name)
         session.save(tree.toEntity(name))
     }
 
-    fun loadTree() {
-        TODO("Not yet implemented")
+
+    fun loadTree(name: String): AVLTree<K, V>? {
+        val treeEntity = findTree(name).singleOrNull()
+
+        return treeEntity?.toTree()
     }
 
     fun deleteTree(name: String) {
