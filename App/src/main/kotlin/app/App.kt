@@ -106,7 +106,11 @@ private fun menuFrameInit() {
 private fun rbtDraw() {
     rbTree = RBTree()
     rbTree.add(100)
-//    rbTree.add(150)
+    rbTree.add(0)
+    rbTree.add(120)
+    rbTree.add(130)
+    rbTree.add(140)
+    rbTree.add(3)
     // Создаем панель с компонентами
     val treePanel = RBTNodePanel(rbTree)
 

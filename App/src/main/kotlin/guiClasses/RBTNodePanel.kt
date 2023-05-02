@@ -40,7 +40,7 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
 
         if (tree.treeRoot != null) {
             val rootX = width / 2 // нода рисуется посередине
-            drawNode(g, tree.treeRoot ?: throw NullNodeException(), rootX, Constants.nodeMargin, rootX)
+            drawNode(g, tree.treeRoot ?: throw NullNodeException(), rootX, Constants.nodeMargin)
         }
     }
 
@@ -48,7 +48,7 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
     /**
      * Рекурсивная отрисовка каждой ноды дерева
      */
-    private fun drawNode(g: Graphics, node: RBNode<Int, Int>, x: Int, y: Int, parentX: Int) {
+    private fun drawNode(g: Graphics, node: RBNode<Int, Int>, x: Int, y: Int) {
         // Устанавливаем цвет рисуемой ноды как у переданной
         g.color = if (node.color == Color.BLACK)
             java.awt.Color.BLACK
@@ -59,25 +59,30 @@ class RBTNodePanel(private val tree: RBTree<Int, Int>) : JPanel() {
         g.fillOval(x - Constants.nodeSize / 2, y - Constants.nodeSize / 2, Constants.nodeSize, Constants.nodeSize)
         g.color = Constants.lineColor //Обводка овала
 
-        if (node.parent != null)
-            g.drawLine(x, y, parentX, y - Constants.nodeMargin)       //рисуем линию, если есть родитель у ноды
-
         if (node.left != null) {
+            val nextX = x - Constants.nodeMargin - Constants.nodeSize
+            val nextY = y + Constants.nodeMargin + Constants.nodeSize
+
+            g.drawLine(x, y, nextX, nextY)
+
             drawNode(
                 g,
                 node.left ?: throw NullNodeException(),
-                x - width / (1 shl (getHeight(node.left ?: throw NullNodeException()) + 2)),
-                y + Constants.nodeMargin + Constants.nodeSize,
-                x
+                nextX,
+                nextY
             )
         }                   //рекурсивно рисуем левое поддерево, shl - побитовый сдвиг влево
         if (node.right != null) {
+            val nextX = x + Constants.nodeMargin + Constants.nodeSize
+            val nextY = y + Constants.nodeMargin + Constants.nodeSize
+
+            g.drawLine(x, y, nextX, nextY)
+
             drawNode(
                 g,
                 node.right ?: throw NullNodeException(),
-                x + width / (1 shl (getHeight(node.right ?: throw NullNodeException()) + 2)),
-                y + Constants.nodeMargin + Constants.nodeSize,
-                x
+                nextX,
+                nextY
             )
         }                   //рекурсивно рисуем правое поддерево
     }
