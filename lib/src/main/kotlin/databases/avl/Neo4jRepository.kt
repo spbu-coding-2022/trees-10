@@ -94,8 +94,8 @@ class Neo4jRepository<K: Comparable<K>, V>(
 
     private fun AVLNodeEntity.toNode() : AVLNode<K, V> {
         return AVLNode(deserializeKey(key), deserializeValue(value)).also {
-            it.left = this.toNode()
-            it.right = this.toNode()
+            it.left = this.left?.toNode()
+            it.right = this.right?.toNode()
             it.height = this.height
         }
     }
