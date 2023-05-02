@@ -1,5 +1,6 @@
 package app
 
+import exceptions.NodeAlreadyExistsException
 import guiClasses.components.Frame
 import guiClasses.components.KeyTextField
 import guiClasses.components.MenuClass
@@ -9,10 +10,7 @@ import guiClasses.components.nodePanels.RBTPanel
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
-import javax.swing.GroupLayout
-import javax.swing.JButton
-import javax.swing.JFrame
-import javax.swing.JTextField
+import javax.swing.*
 
 /**
  * Объект, хранящий отдельно каждое из деревьев
@@ -46,10 +44,35 @@ fun main() {
     menuFrameInit()
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
 }
+
+private fun showError(text: String, frame: JFrame) {
+    JOptionPane.showMessageDialog(frame, text, "Произошла ошибка" , JOptionPane.ERROR_MESSAGE)
+}
 private fun menuFrameInit() {
 
     val addButton = JButton("Add")
     val addTextField = KeyTextField()
+
+    addButton.addActionListener {
+        if (addTextField.text.toIntOrNull() != null) {
+            val key = addTextField.text.toInt()
+            try {
+                when (currentTree) {
+                    TreeTypes.RB -> Trees.RBTree.add(key)
+                    TreeTypes.BINARY -> Trees.binTree.add(key)
+                    TreeTypes.AVL -> Trees.AVLTree.add(key)
+
+                    else -> showError("Сначала выберите дерево", menuFrame)
+                }
+
+                treeInit(currentTree)
+
+            } catch (ex: NodeAlreadyExistsException) {
+                showError("Узел с таким значением уже существует", menuFrame)
+            }
+        } else
+            showError("Добавлять можно только узлы с числовыми значениями", menuFrame)
+    }
 
     val removeButton = JButton("Remove")
     val removeTextField = KeyTextField()
@@ -115,6 +138,7 @@ private fun menuFrameInit() {
             )
 
     )
+
 }
 private fun treeInit(newTree: TreeTypes) {
     treeFrame.dispose()
