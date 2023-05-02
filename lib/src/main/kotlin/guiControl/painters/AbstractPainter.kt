@@ -8,18 +8,24 @@ import trees.AbstractTree
 import java.awt.Point
 
 abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, TreeType : AbstractTree<Int, Int, NodeType>>(
-    private val tree: TreeType,
+    tree: TreeType,
     private val nodeMargin: Int,
     private val nodeSize: Int,
-    private val width: Int
+    width: Int
 ) {
     val nodes: MutableList<NodeView> = mutableListOf()
     val lines: MutableList<LineView> = mutableListOf()
     init {
-        if (tree.root != null)
-            getViewNodes(tree.root ?: throw NullNodeException(), width / 2, nodeMargin)
-    }
+        if (tree.root == null) {
+            // Если дерево ещё не заполнено, то заполним его "образцом"
+            tree.add(100)
+            tree.add(150)
+            tree.add(120)
+            tree.add(-10)
+        }
+        getViewNodes(tree.root ?: throw NullNodeException(), width / 2, nodeMargin)
 
+    }
     /**
      * Позволяет определить каким цветом рисовать ноду
      */
@@ -38,6 +44,8 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
             nextX = x - (x / (2 * n))
             nextY = y + nodeMargin + nodeSize
 
+            lines.add(LineView(Point(x, y), Point(nextX, nextY)))
+
             getViewNodes(
                 node.left ?: throw NullNodeException(),
                 nextX,
@@ -54,12 +62,11 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
                 node.right ?: throw NullNodeException(),
                 nextX,
                 nextY,
-                2 * n + 1
+                (2 * n) + 1
             )
+
+            lines.add(LineView(Point(x, y), Point(nextX, nextY)))
         }
-
-        lines.add(LineView(Point(x, y), Point(nextX, nextY)))
-
     }
 
 }
