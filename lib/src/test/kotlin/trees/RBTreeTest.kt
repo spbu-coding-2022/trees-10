@@ -286,8 +286,8 @@ class RBTreeTest {
             throw TreeException("Неверное расположение узлов, key слева должен быть меньше, а key справа - больше")
         if (this.root?.color != Color.BLACK)
             throw TreeException("root у RBTree не можешь быть красным")
-        if (this.root?.checkEndNodesColor() == false)
-            throw TreeException("Конечные узлы RBTree не могут быть красными")
+        //if (this.root?.checkEndNodesColor() == false)
+            //throw TreeException("Конечные узлы RBTree не могут быть красными")
         if (this.root?.checkEndNodesColor() == false)
             throw TreeException("У красного узла родительский узел может быть только чёрным")
 
