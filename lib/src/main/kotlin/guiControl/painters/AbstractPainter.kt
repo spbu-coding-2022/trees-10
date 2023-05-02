@@ -34,7 +34,7 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
      * Рекурсивно пробегает дерево и заполняет nodes и lines эл-ами для отрисовки
      */
     private fun getViewNodes(node: NodeType, x: Int, y: Int, n: Int = 1) {
-        nodes.add(NodeView(Point(x, y), getNodeColor(node)))
+        nodes.add(NodeView(Point(x, y), getNodeColor(node), node.key.toString()))
 
         var nextX = 0
         var nextY = 0

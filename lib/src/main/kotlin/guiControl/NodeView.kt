@@ -5,5 +5,6 @@ import java.awt.Point
 
 data class NodeView(
     val point: Point,
-    val color: Color
+    val color: Color,
+    val value: String
 )
