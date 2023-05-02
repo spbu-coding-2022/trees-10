@@ -1,8 +1,8 @@
 package trees
 
+import exceptions.*
 import nodes.Color
 import nodes.RBNode
-import exceptions.*
 
 
 class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
