@@ -56,28 +56,28 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
     }
 
     private fun removeNode(node: RBNode<K, V>) {
-        var y: RBNode<K, V>
-        var replaceNode: RBNode<K, V>
+        var replaceNode2: RBNode<K, V>
+        var replaceNode1: RBNode<K, V>
         var yOriginalColor = node.color
         if (node.right != null || node.left != null) {
             if (node.left == null) {
-                replaceNode = node.right ?: throw NullNodeException()
+                replaceNode1 = node.right ?: throw NullNodeException()
                 transplant(node, node.right)
             } else if (node.right == null) {
-                replaceNode = node.left ?: throw NullNodeException()
+                replaceNode1 = node.left ?: throw NullNodeException()
                 transplant(node, node.left)
             } else {
-                y = node.right ?: throw NullNodeException()
-                while (y.left != null) {
-                    y = y.left!!
+                replaceNode2 = node.right ?: throw NullNodeException()
+                while (replaceNode2.left != null) {
+                    replaceNode2 = replaceNode2.left!!
                 }
-                yOriginalColor = y.color
-                replaceNode = if (y.right == null) {
-                    y
+                yOriginalColor = replaceNode2.color
+                replaceNode1 = if (replaceNode2.right != null) {
+                    replaceNode2.right ?: throw NullNodeException()
                 } else {
-                    y.right ?: throw NullNodeException()
+                    replaceNode2
                 }
-                if (replaceNode == y) {
+                /*if (replaceNode == y) {
                     replaceNode.parent = y.parent
                 } else {
                     if (y.parent == node) {
@@ -90,12 +90,46 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
                     }
                 }
                 transplant(node, y)
+                y.right = node.right
                 y.left = node.left
                 y.left?.parent = y
-                y.color = node.color
+                y.color = node.color*/
+                if (replaceNode2.right != null && replaceNode2.parent != node){
+                    replaceNode1.parent = replaceNode2
+                    transplant(replaceNode2, replaceNode2.right)
+                    transplant(node, replaceNode2)
+                    replaceNode2.left = node.left
+                    replaceNode2.right = node.right
+                    replaceNode2.left?.parent = replaceNode2
+                    replaceNode2.right?.parent = replaceNode2
+                    replaceNode2.color = node.color
+                } else if (replaceNode2.right == null && replaceNode2.parent != node) {
+                    replaceNode1.parent = replaceNode2.parent
+                    transplant(node, replaceNode2)
+                    replaceNode2.left = node.left
+                    replaceNode2.right = node.right
+                    replaceNode2.left?.parent = replaceNode2
+                    replaceNode2.right?.parent = replaceNode2
+                    replaceNode2.color = node.color
+                } else if (replaceNode2.right != null){
+                    replaceNode1.parent = replaceNode2
+                    transplant(replaceNode2, replaceNode2.right)
+                    transplant(node, replaceNode2)
+                    replaceNode2.left = node.left
+                    replaceNode2.right = node.right
+                    replaceNode2.left?.parent = replaceNode2
+                    replaceNode2.right?.parent = replaceNode2
+                    replaceNode2.color = node.color
+                } else {
+                    replaceNode1.parent = replaceNode2.parent
+                    transplant(node, replaceNode2)
+                    replaceNode2.left = node.left
+                    replaceNode2.left?.parent = replaceNode2
+                    replaceNode2.color = node.color
+                }
             }
             if (yOriginalColor == Color.BLACK) {
-                fixDelete(replaceNode)
+                fixDelete(replaceNode1)
             }
         } else {
             if (node.parent == null) {

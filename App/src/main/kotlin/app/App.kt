@@ -59,20 +59,6 @@ private fun rbtInit() {
     currentTree = TreeTypes.RB
 
 
-    Trees.RBTree.add(100, 100)
-    Trees.RBTree.add(120, 120)
-    Trees.RBTree.add(50, 50)
-    Trees.RBTree.add(125, 125)
-    Trees.RBTree.add(115, 115)
-    Trees.RBTree.add(10, 100)
-    Trees.RBTree.add(60, 120)
-    Trees.RBTree.add(9, 120)
-    Trees.RBTree.add(11, 120)
-    Trees.RBTree.add(55, 120)
-    Trees.RBTree.add(53, 120)
-    Trees.RBTree.add(52, 120)
-
-
     treeFrame.add(rbtPanel)
 }
 private fun binTreeInit() {
@@ -168,5 +154,4 @@ private fun menuFrameInit() {
 fun main() {
     menuFrameInit()
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
-    rbtInit()
 }
