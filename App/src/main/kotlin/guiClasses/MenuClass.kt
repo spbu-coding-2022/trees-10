@@ -22,14 +22,15 @@ class MenuClass(private val onTreeSelected: (tree: Any) -> Unit) : JMenuBar() {
      * */
     private fun updateMenuItemsChoosing(item: JMenuItem) {
         item.background = Color.PINK
-        menuItems.filter { it != item }.forEach { it.background = Color.WHITE}
+        menuItems.filter { it != item }.forEach { it.background = Color.WHITE }
     }
 
     private val menu = JMenu("Выбор Дерева")
     private val menuItems = arrayOf(
         JMenuItem("Binary Tree"),
         JMenuItem("AVL-Tree"),
-        JMenuItem("Red-black Tree"))
+        JMenuItem("Red-black Tree")
+    )
 
     init {
         menuItems.forEach { menu.add(it) }

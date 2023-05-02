@@ -3,33 +3,20 @@ package app
 import guiClasses.Frame
 import guiClasses.KeyTextField
 import guiClasses.MenuClass
+import guiClasses.RBTNodePanel
+import trees.AVLTree
+import trees.BinaryTree
+import trees.RBTree
 import javax.swing.GroupLayout
 import javax.swing.JButton
-import javax.swing.JPanel
-import javax.swing.JScrollPane
+import javax.swing.JFrame
 
-private fun treeFrameInit() {
-    val treeFrame = Frame("Treeple", 1000, 700, 360, 50)
+private lateinit var treeFrame: JFrame
+private lateinit var menuFrame: JFrame
 
-    // Создаем панель с компонентами
-    val treePanel = JPanel()
-
-    val scrollPane = JScrollPane()
-    // Добавляем панель на панель с прокруткой
-    scrollPane.setViewportView(treePanel)
-
-    // Добавляем панель с прокруткой на окно
-    treeFrame.contentPane.add(scrollPane)
-
-    // Устанавливаем режим прокрутки по вертикали и горизонтали
-    scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-    scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
-
-    treeFrame.add(treePanel)
-}
-
+private lateinit var rbTree: RBTree<Int, Int>
 private fun menuFrameInit() {
-    val menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
+    menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
     val addButton = JButton("Add")
     val addTextField = KeyTextField()
@@ -42,22 +29,23 @@ private fun menuFrameInit() {
 
     val saveButton = JButton("Save")
 
-    val treeMenu = MenuClass(){tree ->
-        when (tree){
+    val treeMenu = MenuClass { tree ->
+        when (tree) {
             is BinaryTree<*, *> -> {
-
+                println("бинарное дерево")
             }
+
             is AVLTree<*, *> -> {
-
+                println("AVL дерево")
             }
-            is RBTree<*, *> -> {
 
+            is RBTree<*, *> -> {
+                rbtDraw()
             }
         }
     }
 
     menuFrame.jMenuBar = treeMenu
-
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
@@ -115,7 +103,29 @@ private fun menuFrameInit() {
     )
 }
 
+private fun rbtDraw() {
+    rbTree = RBTree()
+    rbTree.add(100)
+//    rbTree.add(150)
+    // Создаем панель с компонентами
+    val treePanel = RBTNodePanel(rbTree)
+
+//    val panel = JScrollPane()
+//    // Добавляем панель на панель с прокруткой
+//    panel.setViewportView(treePanel)
+//
+//    // Добавляем панель с прокруткой на окно
+//    treeFrame.contentPane.add(panel)
+//
+//    // Устанавливаем режим прокрутки по вертикали и горизонтали
+//    panel.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+//    panel.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+//
+    treeFrame.add(treePanel)
+}
+
 fun main() {
-    treeFrameInit()
     menuFrameInit()
+    treeFrame = Frame("Treeple", 1000, 700, 360, 50)
+    rbtDraw()
 }
