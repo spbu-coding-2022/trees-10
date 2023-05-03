@@ -1,7 +1,8 @@
 package guiClasses.components
 
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.ImageIcon
+import javax.swing.JFrame
 
 class Frame(name: String, width: Int, height: Int, locX: Int, locY: Int) : JFrame() {
     init {
