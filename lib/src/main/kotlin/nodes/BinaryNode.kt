@@ -1,5 +1,9 @@
 package nodes
 
+import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
+import exceptions.NullNodeException
+
 /**
  * Класс узла для бинарного дерева.
  *
@@ -9,46 +13,45 @@ package nodes
  * @property value значение узла.
  * @author Dmitriy Zaytsev
  */
-open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var value: V?)  : AbstractNode<K, V, BinaryNode<K, V>>() {
-
-    override var right : BinaryNode<K, V>? = null
-    override var left : BinaryNode<K, V>? = null
-
-    open fun search(key: K) : BinaryNode<K, V>? =
+class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
+    AbstractNode<K, V, BinaryNode<K, V>>(key, value) {
+    fun search(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
             0 -> this
             -1 -> this.left?.search(key)
             else -> null
-    }
-
-    open fun remove(root : BinaryNode<K, V>?, key : K) : BinaryNode<K, V>? {
-        if (root == null)
-            return null
+        }
+    fun remove(root: BinaryNode<K, V>?, key: K): BinaryNode<K, V>? {
         if (key == this.key) { // когда remove вызывается для удаляемой вершины
-            if (this.right == null && this.left == null)
-                return null
+            if (right == null && left == null)
+                return null // просто стираем ноду
+
             // Простой случай - если есть только 1 потомок
-            else if  (this.left == null)
-                return this.right
-            else if (this.right == null)
-                return this.left
-            // Есть оба поддерева
+            else if (left == null)
+                return right
+            else if (right == null)
+                return left
+
+            // Случай где есть два потомка
             else {
                 // Находим минимальное дерево
+                val minNode = findMin(right) ?: throw NullNodeException()
+
                 // Перенимаем его key и value
-                // Удаляем минимальное дерево
-                val minNode = findMin(this.right)
-                minNode?.let {
+                minNode.let {
                     this.key = it.key
                     this.value = it.value
+                    // Удаляем минимальное дерево
+                    this.right = right?.remove(right, it.key)
                 }
-                this.right = right?.remove(right, key)
                 return this
             }
 
         } else {
-            // Замещаем поддеревья на минимальные
+            if (left == null && right == null)
+                throw NodeNotFoundException()
+            // Идём дальше по дереву искать что удалить
             if (key < this.key)
                 this.left = left?.remove(left, key)
             else
@@ -57,13 +60,7 @@ open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var val
         }
     }
 
-    /**
-     * @param[node] Узел для которого ищется минимальный эл-т.
-     * @return Наименьший узел.
-     */
-    private fun findMin(node: BinaryNode<K, V>?): BinaryNode<K, V>? = if (node?.left != null) findMin(node.left) else node
-
-    open fun add(key : K, value : V?) {
+    fun add(key: K, value: V?) {
         val compare = key.compareTo(this.key)
 
         if (compare == 1) {
@@ -71,9 +68,10 @@ open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var val
                 right = BinaryNode(key, value)
             else
                 right?.add(key, value)
-        } else if (compare == 0) {
-            this.value = value
-        } else {
+        } else if (compare == 0)
+        // Попытка добавления новой ноды с уже существующим в дереве ключом
+            throw NodeAlreadyExistsException()
+        else {
             if (left == null)
                 left = BinaryNode(key, value)
             else
@@ -81,4 +79,14 @@ open class BinaryNode<K: Comparable<K>, V>(override var key: K, override var val
         }
     }
 
+    /**
+     * @param[node] Узел для которого ищется минимальный эл-т.
+     * @return Наименьший узел.
+     */
+    private fun findMin(node: BinaryNode<K, V>?): BinaryNode<K, V>? {
+        return if (node?.left != null)
+            findMin(node.left)
+        else
+            node
+    }
 }

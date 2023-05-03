@@ -1,82 +1,82 @@
 package trees
 
+import exceptions.NodeAlreadyExistsException
+import exceptions.NodeNotFoundException
+import exceptions.NullNodeException
 import nodes.AVLNode
 import kotlin.math.max
 
 class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
-    override var root: AVLNode<K, V>? = null
-
-
     override fun add(key: K, value: V?) {
-        root = insert(root , key , value)
+        fun addRecursive(node: AVLNode<K, V>? , key: K, value: V?): AVLNode<K, V> {
+            if (node == null) {
+                return AVLNode(key, value)
+            }
+
+            val delta: Int = key.compareTo(node.key)
+
+            if (delta < 0) {
+                node.left = addRecursive(node.left , key , value)
+            } else if(delta > 0) {
+                node.right = addRecursive(node.right , key , value)
+            } else {
+                throw NodeAlreadyExistsException()
+            }
+
+            return rebalance(node) ?: throw NullNodeException()
+        }
+
+        root = addRecursive(root , key , value)
     }
 
     override fun remove(key: K) {
-        root = delete(root, key)
-    }
-
-    override fun search(key: K): AVLNode<K, V>? {
-        return searchNode(root, key)
-    }
-
-    private fun searchNode(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
-        if (node == null) {
-            return null
-        }
-
-        if (key < node.key) {
-            return searchNode(node.left, key)
-        } else if (key > node.key) {
-            return searchNode(node.right, key)
-        } else {
-            return node
-        }
-    }
-
-    private fun delete(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
-        if (node == null) {
-            return null
-        }
-
-        if (key < node.key) {
-            node.left = delete(node.left , key)
-        } else if (key > node.key) {
-            node.right = delete(node.right , key)
-        } else {
-            if (node.left == null) {
-                return node.right
-            } else if (node.right == null) {
-                return node.left
+        fun removeRecursive(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
+            if (node == null) {
+                throw NodeNotFoundException()
             }
 
-            val temp = findMin(node)
-            node.value = temp.value
-            node.right = delete(node.right, temp.key)
+            if (key < node.key) {
+                node.left = removeRecursive(node.left , key)
+            } else if (key > node.key) {
+                node.right = removeRecursive(node.right , key)
+            } else {
+                if (node.left == null) {
+                    return node.right
+                } else if (node.right == null) {
+                    return node.left
+                }
 
+                val minNode = findMin(node) ?: throw NullNodeException()
+                node.value = minNode.value
+                node.right = removeRecursive(node.right, minNode.key)
+
+            }
+
+            return rebalance(node) ?: throw NullNodeException()
         }
 
-        return rebalance(node) ?: throw Exception("Rebalance returned a null value")
+        root = removeRecursive(root, key)
     }
 
-    private fun insert(node: AVLNode<K, V>? , key: K, value: V?): AVLNode<K, V> {
-        if (node == null) {
-            return AVLNode(key, value)
+    override fun search(key: K): AVLNode<K, V> {
+        fun searchRecursive(node: AVLNode<K, V>?, key: K): AVLNode<K, V>? {
+            if (node == null) {
+                return null
+            }
+
+            return if (key < node.key) {
+                searchRecursive(node.left, key)
+            } else if (key > node.key) {
+                searchRecursive(node.right, key)
+            } else {
+                node
+            }
         }
 
-        val delta: Int = key.compareTo(node.key)
-
-        if (delta < 0) {
-            node.left = insert(node.left , key , value)
-        } else if(delta > 0) {
-            node.right = insert(node.right , key , value)
-        } else {
-            //Duplicate key
-        }
-
-        return rebalance(node) ?: throw Exception("Rebalance returned a null value")
+        return searchRecursive(root, key) ?: throw NodeNotFoundException()
     }
 
-    private fun findMin(node: AVLNode<K, V>): AVLNode<K, V> = if (node.left != null) findMin(node.left!!) else node
+    private fun findMin(node: AVLNode<K, V>?): AVLNode<K, V>? = if (node?.left != null) findMin(node.left) else node
 
     private fun rebalance(node: AVLNode<K, V>): AVLNode<K, V>? {
         node.height = 1 + max(getHeight(node.left) , getHeight(node.right))
@@ -85,20 +85,23 @@ class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
         val leftBalance: Int = getBalance(node.left)
         val rightBalance: Int = getBalance(node.right)
 
-        if (balance > 1 && leftBalance >= 0) {
-            return rotateRight(node)
+        if (balance > 1) {
+            return if (leftBalance >= 0) {
+                rotateRight(node)
+            } else{
+                node.left = rotateLeft(node.left)
+                rotateRight(node)
+            }
         }
-        if (balance > 1 && leftBalance < 0) {
-            node.left = rotateLeft(node.left)
-            return rotateRight(node)
+        if (balance < -1) {
+            return if (rightBalance <= 0) {
+                rotateLeft(node)
+            } else {
+                node.right = rotateRight(node.right)
+                rotateLeft(node)
+            }
         }
-        if (balance < -1 && rightBalance <= 0) {
-            return rotateLeft(node)
-        }
-        if (balance < -1 && rightBalance > 0) {
-            node.right = rotateRight(node.right)
-            return rotateLeft(node)
-        }
+
 
         return node
     }

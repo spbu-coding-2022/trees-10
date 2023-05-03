@@ -1,5 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.8.10'
+    id 'org.jetbrains.kotlin.jvm' version "${KOTLIN_JVM_VERSION}"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "${KOTLIN_JVM_VERSION}"
     id 'java-library'
 }
 
@@ -9,22 +10,16 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
-    api 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'com.google.guava:guava:31.1-jre'
+    testImplementation "${KOTLIN_TEST_JUNIT}"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
 
     implementation("org.xerial:sqlite-jdbc:3.32.3.2")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.0.6")
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor.getDisplayName())
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED"
     }
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test " + descriptor + " message: " + event.message )
-    }
-    failFast = true
 }

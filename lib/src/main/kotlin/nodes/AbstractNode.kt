@@ -1,11 +1,15 @@
 package nodes
 
-abstract class AbstractNode<K : Comparable<K>, V, NodeType : AbstractNode<K, V, NodeType>>() {
-    abstract var key : K
+abstract class AbstractNode<K : Comparable<K>, V, node : AbstractNode<K, V, node>>(key: K, value: V?) :
+    Comparable<AbstractNode<K, V, node>> {
+    var key: K = key
         protected set
-    abstract var value : V?
+
+    var value: V? = value
         internal set
 
-    abstract var right : NodeType?
-    abstract var left : NodeType?
+    var right: node? = null
+    var left: node? = null
+
+    override fun compareTo(other: AbstractNode<K, V, node>): Int = this.key.compareTo(other.key)
 }
