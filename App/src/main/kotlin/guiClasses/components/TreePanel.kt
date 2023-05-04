@@ -24,7 +24,10 @@ class TreePanel(
     fun changeTree(newLines: List<LineView>, newNodes: List<NodeView>) {
         this.linesToDraw = newLines
         this.nodesToDraw = newNodes
+
+        repaint()
     }
+
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
 
@@ -37,14 +40,25 @@ class TreePanel(
             it.setRenderingHints(rh)
         }
 
+        if (nodesToDraw.isEmpty()) {
+            val x = width / 2 - 100
+            val y = height / 2
+
+            g2d.color = Color.gray
+            g2d.font = Font("Tahoma", Font.TRUETYPE_FONT, 24)
+            g2d.drawString("Tree is empty ;(", x, y)
+
+            return
+        }
+
         for (line in linesToDraw)
-            drawLine(line)
+            drawLine(line, g2d)
 
         for (node in nodesToDraw)
-            drawNode(node)
+            drawNode(node, g2d)
     }
 
-    private fun drawNode(node: NodeView) {
+    private fun drawNode(node: NodeView, graphics: Graphics2D) {
         graphics.color = node.color
 
         // Рисуем овал (ноду)
@@ -63,7 +77,7 @@ class TreePanel(
         )
     }
 
-    private fun drawLine(line: LineView) {
+    private fun drawLine(line: LineView, graphics: Graphics2D) {
         graphics.color = lineColor
         graphics.drawLine(line.from.x, line.from.y, line.to.x, line.to.y)
     }

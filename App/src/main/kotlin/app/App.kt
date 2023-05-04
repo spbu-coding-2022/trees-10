@@ -7,9 +7,10 @@ import exceptions.NodeNotFoundException
 import guiClasses.components.Frame
 import guiClasses.components.KeyTextField
 import guiClasses.components.MenuClass
-import guiClasses.components.nodePanels.AVLPanel
-import guiClasses.components.nodePanels.BTPanel
-import guiClasses.components.nodePanels.RBTPanel
+import guiClasses.components.TreePanel
+import guiControl.painters.AVLPainter
+import guiControl.painters.BTPainter
+import guiControl.painters.RBTPainter
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
@@ -39,6 +40,9 @@ enum class TreeTypes {
     None
 }
 
+/**
+ * Константы с сообщениями ошибок, именами файлов бд
+ */
 object Constants {
     const val BinaryBaseName = "Binary Tree Data.db"
     const val RBTBaseName = "Red-Black Tree Data.yml"
@@ -58,10 +62,19 @@ object Constants {
 private var currentTree: TreeTypes = TreeTypes.None
 
 private lateinit var treeFrame: JFrame
+private lateinit var treePanel: TreePanel
+
 private lateinit var menuFrame: JFrame
 fun main() {
+    treeFrameInit()
     menuFrameInit()
+    loadDatabase()
+}
 
+/**
+ * Вытаскивает деревья из баз данных
+ */
+private fun loadDatabase() {
     if (File(Constants.RBTBaseName).exists()) {
         try {
             val base = RBTBase(Constants.RBTBaseName,
@@ -76,7 +89,7 @@ fun main() {
 
             Trees.RBTree = base.loadTree()
         } catch (ex: Exception) {
-            showError(Constants.DataReadError)
+            showMessage(Constants.DataReadError)
         }
     }
     if (File(Constants.BinaryBaseName).exists()) {
@@ -93,38 +106,66 @@ fun main() {
 
             Trees.binTree = base.loadTree()
         } catch (ex: Exception) {
-            showError(Constants.DataReadError)
+            showMessage(Constants.DataReadError)
         }
     }
 }
 
-/**
- * Выполняет отрисовку переданного дерева на treeFrame
- */
-private fun treeInit(newTree: TreeTypes) {
-    if (::treeFrame.isInitialized)
-        treeFrame.dispose()
+private fun treeFrameInit() {
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
-    when (newTree) {
-        TreeTypes.RB -> treeFrame.add(RBTPanel(Trees.RBTree))
-        TreeTypes.AVL -> treeFrame.add(AVLPanel(Trees.AVLTree))
-        TreeTypes.BINARY -> treeFrame.add(BTPanel(Trees.binTree))
-        else -> return
+    treePanel = TreePanel()
+    treeFrame.add(treePanel)
+
+    Trees.binTree.run {
+        add(100)
+        add(120)
+        add(-10)
     }
-    println(newTree)
-    currentTree = newTree
+
+    Trees.RBTree.run {
+        add(100)
+        add(120)
+        add(-10)
+    }
+
+    Trees.AVLTree.run {
+        add(100)
+        add(120)
+        add(-10)
+    }
 
 }
 
 /**
  * Выводит сообщение об ошибке на экран
  */
-private fun showError(text: String, frame: JFrame = menuFrame) {
-        JOptionPane.showMessageDialog(frame, text, "An error has occurred", JOptionPane.ERROR_MESSAGE)
+private fun showMessage(text: String, frame: JFrame = menuFrame, messageType: Int = JOptionPane.ERROR_MESSAGE) {
+    JOptionPane.showMessageDialog(frame, text, "An error has occurred", messageType)
+}
+
+private fun treeRepaint() {
+    when (currentTree) {
+        TreeTypes.BINARY -> {
+            val painter = BTPainter(Trees.binTree, width = treeFrame.width)
+            treePanel.changeTree(painter.lines, painter.nodes)
+        }
+
+        TreeTypes.AVL -> {
+            val painter = AVLPainter(Trees.AVLTree, width = treeFrame.width)
+            treePanel.changeTree(painter.lines, painter.nodes)
+        }
+
+        TreeTypes.RB -> {
+            val painter = RBTPainter(Trees.RBTree, width = treeFrame.width)
+            treePanel.changeTree(painter.lines, painter.nodes)
+        }
+
+        else -> {}
+    }
 }
 
 /**
- * Заполнение Menu Frame компонентами
+ * Заполняет menuFrame компонентами
  */
 private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
@@ -141,14 +182,16 @@ private fun menuFrameInit() {
                     TreeTypes.BINARY -> Trees.binTree.add(key)
                     TreeTypes.AVL -> Trees.AVLTree.add(key)
 
-                    else -> showError(Constants.NotChosenErrorMessage)
+                    else -> showMessage(Constants.NotChosenErrorMessage)
                 }
 
             } catch (ex: NodeAlreadyExistsException) {
-                showError(Constants.AlreadyExistsErrorMessage)
+                showMessage(Constants.AlreadyExistsErrorMessage)
             }
         } else
-            showError(Constants.InputErrorMessage)
+            showMessage(Constants.InputErrorMessage)
+
+        treeRepaint()
     }
 
     val removeButton = JButton("Remove")
@@ -163,14 +206,16 @@ private fun menuFrameInit() {
                     TreeTypes.BINARY -> Trees.binTree.remove(key)
                     TreeTypes.AVL -> Trees.AVLTree.remove(key)
 
-                    else -> showError(Constants.NotChosenErrorMessage)
+                    else -> showMessage(Constants.NotChosenErrorMessage)
                 }
 
             } catch (ex: NodeNotFoundException) {
-                showError(Constants.NotFoundErrorMessage)
+                showMessage(Constants.NotFoundErrorMessage)
             }
         } else
-            showError(Constants.InputErrorMessage)
+            showMessage(Constants.InputErrorMessage)
+
+        treeRepaint()
     }
 
     val saveButton = JButton("Save")
@@ -180,22 +225,28 @@ private fun menuFrameInit() {
         when (currentTree) {
             TreeTypes.RB -> {
                 if (Trees.RBTree.root == null)
-                    showError(Constants.TreeAlreadyClearErrorMessage)
+                    showMessage(Constants.TreeAlreadyClearErrorMessage)
                 else
-                    Trees.RBTree = RBTree() }
+                    Trees.RBTree = RBTree()
+            }
+
             TreeTypes.BINARY -> {
                 if (Trees.binTree.root == null)
-                    showError(Constants.TreeAlreadyClearErrorMessage)
+                    showMessage(Constants.TreeAlreadyClearErrorMessage)
                 else
-                    Trees.binTree = BinaryTree() }
+                    Trees.binTree = BinaryTree()
+            }
+
             TreeTypes.AVL -> {
                 if (Trees.AVLTree.root == null)
-                    showError(Constants.TreeAlreadyClearErrorMessage)
+                    showMessage(Constants.TreeAlreadyClearErrorMessage)
                 else
-                    Trees.AVLTree = AVLTree() }
+                    Trees.AVLTree = AVLTree()
+            }
 
-            else -> showError(Constants.NotChosenErrorMessage)
+            else -> showMessage(Constants.NotChosenErrorMessage)
         }
+        treeRepaint()
     }
 
     saveButton.addActionListener {
@@ -228,14 +279,27 @@ private fun menuFrameInit() {
             }
 
             TreeTypes.AVL -> {
-                showError("AVL tree saving is not implemented ;(")
+                showMessage("AVL tree saving is not implemented ;(")
             }
 
-            else -> showError(Constants.NotChosenErrorMessage)
+            else -> showMessage(Constants.NotChosenErrorMessage)
         }
     }
 
-    menuFrame.jMenuBar = MenuClass(::treeInit)
+    menuFrame.jMenuBar = MenuClass(
+        onBinSelected = {
+            currentTree = TreeTypes.BINARY
+            treeRepaint()
+        },
+        onAVLSelected = {
+            currentTree = TreeTypes.AVL
+            treeRepaint()
+        },
+        onRBTSelected = {
+            currentTree = TreeTypes.RB
+            treeRepaint()
+        }
+    )
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
