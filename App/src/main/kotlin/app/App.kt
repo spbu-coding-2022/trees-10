@@ -42,6 +42,12 @@ enum class TreeTypes {
 object Constants {
     const val BinaryBaseName = "Binary Tree Data.db"
     const val RBTBaseName = "Red-Black Tree Data.yml"
+
+    const val NotFoundErrorMessage = "Tree node with such key not found"
+    const val NotChosenErrorMessage = "You must select a tree to perform this action"
+    const val AlreadyExistsErrorMessage = "Tree node with the same key already exists"
+    const val InputErrorMessage = "Entered value is not a number or is too large"
+    const val DataReadError = "Unable to read data from file"
 }
 
 /**
@@ -68,7 +74,7 @@ fun main() {
 
             Trees.RBTree = base.loadTree()
         } catch (ex: Exception) {
-            showError("Не удалось прочитать данных из файла ${Constants.RBTBaseName}", menuFrame)
+            showError(Constants.DataReadError)
         }
     }
     if (File(Constants.BinaryBaseName).exists()) {
@@ -85,11 +91,14 @@ fun main() {
 
             Trees.binTree = base.loadTree()
         } catch (ex: Exception) {
-            showError("Не удалось прочитать данных из файла ${Constants.BinaryBaseName}", menuFrame)
+            showError(Constants.DataReadError)
         }
     }
 }
 
+/**
+ * Выполняет отрисовку переданного дерева на treeFrame
+ */
 private fun treeInit(newTree: TreeTypes) {
     if (::treeFrame.isInitialized)
         treeFrame.dispose()
@@ -105,12 +114,16 @@ private fun treeInit(newTree: TreeTypes) {
 
 }
 
-
-
-private fun showError(text: String, frame: JFrame) {
-    JOptionPane.showMessageDialog(frame, text, "Произошла ошибка", JOptionPane.ERROR_MESSAGE)
+/**
+ * Выводит сообщение об ошибке на экран
+ */
+private fun showError(text: String, frame: JFrame = menuFrame) {
+        JOptionPane.showMessageDialog(frame, text, "An error has occurred", JOptionPane.ERROR_MESSAGE)
 }
 
+/**
+ * Заполнение Menu Frame компонентами
+ */
 private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
@@ -126,14 +139,14 @@ private fun menuFrameInit() {
                     TreeTypes.BINARY -> Trees.binTree.add(key)
                     TreeTypes.AVL -> Trees.AVLTree.add(key)
 
-                    else -> showError("Сначала выберите дерево", menuFrame)
+                    else -> showError(Constants.NotChosenErrorMessage)
                 }
 
             } catch (ex: NodeAlreadyExistsException) {
-                showError("Узел с таким значением уже существует", menuFrame)
+                showError(Constants.AlreadyExistsErrorMessage)
             }
         } else
-            showError("Добавлять можно только узлы с числовыми значениями", menuFrame)
+            showError(Constants.InputErrorMessage)
     }
 
     val removeButton = JButton("Remove")
@@ -148,20 +161,20 @@ private fun menuFrameInit() {
                     TreeTypes.BINARY -> Trees.binTree.remove(key)
                     TreeTypes.AVL -> Trees.AVLTree.remove(key)
 
-                    else -> showError("Сначала выберите дерево", menuFrame)
+                    else -> showError(Constants.NotChosenErrorMessage)
                 }
 
             } catch (ex: NodeNotFoundException) {
-                showError("Узла с таким значением не существует", menuFrame)
+                showError(Constants.NotFoundErrorMessage)
             }
         } else
-            showError("Добавлять можно только узлы с числовыми значениями", menuFrame)
+            showError(Constants.InputErrorMessage)
     }
 
     val saveButton = JButton("Save")
-    val refreshButton = JButton("Refresh")
+    val clearButton = JButton("Clear")
 
-    refreshButton.addActionListener {
+    clearButton.addActionListener {
         treeInit(currentTree)
     }
 
@@ -195,10 +208,10 @@ private fun menuFrameInit() {
             }
 
             TreeTypes.AVL -> {
-                showError("Сохранение AVL дерева не реализовано", menuFrame)
+                showError("AVL tree saving is not implemented ;(")
             }
 
-            else -> showError("Сначала выберите дерево", menuFrame)
+            else -> showError(Constants.NotChosenErrorMessage)
         }
     }
 
@@ -228,7 +241,7 @@ private fun menuFrameInit() {
                     )
             )
             .addComponent(saveButton)
-            .addComponent(refreshButton)
+            .addComponent(clearButton)
     )
 
     layout.setVerticalGroup(
@@ -249,7 +262,7 @@ private fun menuFrameInit() {
             .addGroup(
                 layout.createSequentialGroup()
                     .addComponent(saveButton)
-                    .addComponent(refreshButton)
+                    .addComponent(clearButton)
             )
 
     )

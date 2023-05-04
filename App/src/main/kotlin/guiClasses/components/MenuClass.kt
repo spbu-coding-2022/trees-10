@@ -25,7 +25,7 @@ class MenuClass(
         menuItems.filter { it != item }.forEach { it.background = Color.WHITE }
     }
 
-    private val menu = JMenu("Выбор Дерева")
+    private val menu = JMenu("Tree select")
     private val menuItems = arrayOf(
         JMenuItem("Binary Tree"),
         JMenuItem("AVL-Tree"),
