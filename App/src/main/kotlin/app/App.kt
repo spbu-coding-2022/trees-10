@@ -212,6 +212,7 @@ private fun menuFrameInit() {
         } else
             showMessage(Constants.InputErrorMessage)
 
+        addTextField.text = ""
         treeRepaint()
     }
 
@@ -236,6 +237,7 @@ private fun menuFrameInit() {
         } else
             showMessage(Constants.InputErrorMessage)
 
+        removeTextField.text = ""
         treeRepaint()
     }
 
