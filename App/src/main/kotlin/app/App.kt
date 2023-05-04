@@ -155,16 +155,28 @@ private fun showMessage(text: String, frame: JFrame = menuFrame, messageType: In
 private fun treeRepaint() {
     when (currentTree) {
         TreeTypes.BINARY -> {
+            if (Trees.binTree.root == null) {
+                treePanel.clearTree()
+                return
+            }
             val painter = BTPainter(Trees.binTree, width = treeFrame.width)
             treePanel.changeTree(painter.lines, painter.nodes)
         }
 
         TreeTypes.AVL -> {
+            if (Trees.AVLTree.root == null) {
+                treePanel.clearTree()
+                return
+            }
             val painter = AVLPainter(Trees.AVLTree, width = treeFrame.width)
             treePanel.changeTree(painter.lines, painter.nodes)
         }
 
         TreeTypes.RB -> {
+            if (Trees.RBTree.root == null) {
+                treePanel.clearTree()
+                return
+            }
             val painter = RBTPainter(Trees.RBTree, width = treeFrame.width)
             treePanel.changeTree(painter.lines, painter.nodes)
         }

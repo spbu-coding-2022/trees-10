@@ -28,6 +28,13 @@ class TreePanel(
         repaint()
     }
 
+    fun clearTree() {
+        linesToDraw = listOf()
+        nodesToDraw = listOf()
+
+        repaint()
+    }
+
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
 
@@ -41,8 +48,8 @@ class TreePanel(
         }
 
         if (nodesToDraw.isEmpty()) {
-            val x = width / 2 - 100
-            val y = height / 2
+            val x = width / 2 - 90
+            val y = height / 2 - 10
 
             g2d.color = Color.gray
             g2d.font = Font("Tahoma", Font.TRUETYPE_FONT, 24)
