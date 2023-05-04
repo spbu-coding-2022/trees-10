@@ -28,8 +28,24 @@ class AVLTreeTest {
         @DisplayName("Root remove")
         fun `Root remove`() {
             tree.add(100, "root")
+
             tree.remove(100)
-            assertEquals(null, tree.testSearch(100)?.value)
+
+            assertEquals(null, tree.testSearch(100))
+
+        }
+
+        @Test
+        @DisplayName("Root with elements remove")
+        fun `Root with elements remove`() {
+            tree.add(100, "root")
+            tree.add(120)
+            tree.add(-10)
+
+            tree.remove(100)
+
+            assertEquals(null, tree.testSearch(100))
+
         }
 
         @Test
