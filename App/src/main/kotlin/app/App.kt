@@ -128,7 +128,7 @@ private fun menuFrameInit() {
     menuFrame = Frame("Treeple Menu", 300, 400, 50, 50)
 
     val addButton = JButton("Add")
-    val addTextField = KeyTextField()
+    val addTextField = KeyTextField(addButton)
 
     addButton.addActionListener {
         if (addTextField.text.toIntOrNull() != null) {
@@ -150,7 +150,7 @@ private fun menuFrameInit() {
     }
 
     val removeButton = JButton("Remove")
-    val removeTextField = KeyTextField()
+    val removeTextField = KeyTextField(removeButton)
 
     removeButton.addActionListener {
         if (removeTextField.text.toIntOrNull() != null) {
