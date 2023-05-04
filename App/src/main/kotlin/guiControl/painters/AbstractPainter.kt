@@ -15,6 +15,7 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
 ) {
     val nodes: MutableList<NodeView> = mutableListOf()
     val lines: MutableList<LineView> = mutableListOf()
+
     init {
         if (tree.root == null) {
             // Если дерево ещё не заполнено, то заполним его "образцом"
@@ -25,10 +26,11 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
         getViewNodes(tree.root ?: throw NullNodeException(), width / 2, nodeMargin)
 
     }
+
     /**
      * Позволяет определить каким цветом рисовать ноду
      */
-    protected abstract fun getNodeColor(node: NodeType) : java.awt.Color
+    protected abstract fun getNodeColor(node: NodeType): java.awt.Color
 
     /**
      * Рекурсивно пробегает дерево и заполняет nodes и lines эл-ами для отрисовки
@@ -36,8 +38,8 @@ abstract class AbstractPainter<NodeType : AbstractNode<Int, Int, NodeType>, Tree
     private fun getViewNodes(node: NodeType, x: Int, y: Int, n: Int = 1) {
         nodes.add(NodeView(Point(x, y), getNodeColor(node), node.key.toString()))
 
-        var nextX = 0
-        var nextY = 0
+        var nextX: Int
+        var nextY: Int
 
         if (node.left != null) {
             nextX = x - (x / (2 * n))
