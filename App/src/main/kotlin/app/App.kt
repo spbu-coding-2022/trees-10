@@ -14,11 +14,14 @@ import guiControl.painters.RBTPainter
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.io.File
 import javax.swing.GroupLayout
 import javax.swing.JButton
 import javax.swing.JFrame
 import javax.swing.JOptionPane
+
 
 /**
  * Объект, хранящий отдельно каждое из деревьев
@@ -115,6 +118,12 @@ private fun treeFrameInit() {
     treeFrame = Frame("Treeple", 1000, 700, 360, 50)
     treePanel = TreePanel()
     treeFrame.add(treePanel)
+
+    treeFrame.addComponentListener(object : ComponentAdapter() {
+        override fun componentResized(componentEvent: ComponentEvent) {
+            treeRepaint()
+        }
+    })
 
     Trees.binTree.run {
         add(100)
