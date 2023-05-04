@@ -48,6 +48,8 @@ object Constants {
     const val AlreadyExistsErrorMessage = "Tree node with the same key already exists"
     const val InputErrorMessage = "Entered value is not a number or is too large"
     const val DataReadError = "Unable to read data from file"
+    const val TreeAlreadyClearErrorMessage = "There are no more nodes in tree"
+
 }
 
 /**
@@ -175,7 +177,25 @@ private fun menuFrameInit() {
     val clearButton = JButton("Clear")
 
     clearButton.addActionListener {
-        treeInit(currentTree)
+        when (currentTree) {
+            TreeTypes.RB -> {
+                if (Trees.RBTree.root == null)
+                    showError(Constants.TreeAlreadyClearErrorMessage)
+                else
+                    Trees.RBTree = RBTree() }
+            TreeTypes.BINARY -> {
+                if (Trees.binTree.root == null)
+                    showError(Constants.TreeAlreadyClearErrorMessage)
+                else
+                    Trees.binTree = BinaryTree() }
+            TreeTypes.AVL -> {
+                if (Trees.AVLTree.root == null)
+                    showError(Constants.TreeAlreadyClearErrorMessage)
+                else
+                    Trees.AVLTree = AVLTree() }
+
+            else -> showError(Constants.NotChosenErrorMessage)
+        }
     }
 
     saveButton.addActionListener {
