@@ -3,7 +3,7 @@ package nodes
 abstract class AbstractNode<K : Comparable<K>, V, node : AbstractNode<K, V, node>>(key: K, value: V?) :
     Comparable<AbstractNode<K, V, node>> {
     var key: K = key
-        protected set
+        internal set
 
     var value: V? = value
         internal set

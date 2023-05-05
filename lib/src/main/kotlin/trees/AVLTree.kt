@@ -46,7 +46,8 @@ class AVLTree<K: Comparable<K>, V> : AbstractTree<K, V, AVLNode<K, V>>() {
                     return node.left
                 }
 
-                val minNode = findMin(node) ?: throw NullNodeException()
+                val minNode = findMin(node.right) ?: throw NullNodeException()
+                node.key = minNode.key
                 node.value = minNode.value
                 node.right = removeRecursive(node.right, minNode.key)
 
