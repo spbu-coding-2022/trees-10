@@ -1,13 +1,15 @@
 package guiClasses.components
 
-import app.TreeTypes
 import java.awt.Color
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 
 class MenuClass(
-    private val onTreeSelected: (type: TreeTypes) -> Unit
+    private val onBinSelected: () -> Unit,
+    private val onAVLSelected: () -> Unit,
+    private val onRBTSelected: () -> Unit
+
 ) : JMenuBar() {
 
     /**
@@ -25,7 +27,7 @@ class MenuClass(
         menuItems.filter { it != item }.forEach { it.background = Color.WHITE }
     }
 
-    private val menu = JMenu("Выбор Дерева")
+    private val menu = JMenu("Tree select")
     private val menuItems = arrayOf(
         JMenuItem("Binary Tree"),
         JMenuItem("AVL-Tree"),
@@ -39,19 +41,19 @@ class MenuClass(
         // Слушатель событий для элемента меню "Binary Tree"
         menuItems[0].addActionListener {
             updateMenuItemsChoosing(menuItems[0])
-            onTreeSelected(TreeTypes.BINARY)
+            onBinSelected()
         }
 
         // Слушатель событий для элемента меню "AVL-Tree"
         menuItems[1].addActionListener {
             updateMenuItemsChoosing(menuItems[1])
-            onTreeSelected(TreeTypes.AVL)
+            onAVLSelected()
         }
 
         // Слушатель событий для элемента меню "Red-black Tree"
         menuItems[2].addActionListener {
             updateMenuItemsChoosing(menuItems[2])
-            onTreeSelected(TreeTypes.RB)
+            onRBTSelected()
         }
 
         add(menu)
