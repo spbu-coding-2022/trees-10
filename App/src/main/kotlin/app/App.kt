@@ -69,8 +69,8 @@ private lateinit var treePanel: TreePanel
 
 private lateinit var menuFrame: JFrame
 fun main() {
-    treeFrameInit()
     menuFrameInit()
+    treeFrameInit()
     loadDatabase()
 }
 
