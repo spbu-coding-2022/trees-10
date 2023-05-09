@@ -425,9 +425,4 @@ private fun menuFrameInit() {
             )
 
     )
-
-    fun find(){
-
-    }
-
 }
