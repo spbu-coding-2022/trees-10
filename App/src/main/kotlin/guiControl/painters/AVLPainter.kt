@@ -1,8 +1,8 @@
 package guiControl.painters
 
 import nodes.AVLNode
+import nodes.Color
 import trees.AVLTree
-import java.awt.Color
 
 class AVLPainter(
     tree: AVLTree<Int, Int>,
@@ -10,5 +10,9 @@ class AVLPainter(
     nodeSize: Int = 20,
     width: Int
 ) : AbstractPainter<AVLNode<Int, Int>, AVLTree<Int, Int>>(tree, nodeMargin, nodeSize, width) {
-    override fun getNodeColor(node: AVLNode<Int, Int>): Color = Color.gray
+    override fun getNodeColor(node: AVLNode<Int, Int>): java.awt.Color{
+        return if (node.color == Color.YELLOW){
+            java.awt.Color.YELLOW
+        } else java.awt.Color.GRAY
+    }
 }

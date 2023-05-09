@@ -10,5 +10,8 @@ abstract class AbstractNode<K : Comparable<K>, V, node : AbstractNode<K, V, node
         internal set
     var left: node? = null
         internal set
+    abstract var color: Color
     override fun compareTo(other: AbstractNode<K, V, node>): Int = this.key.compareTo(other.key)
 }
+
+enum class Color { RED, BLACK, YELLOW, DARK_GRAY, GRAY}

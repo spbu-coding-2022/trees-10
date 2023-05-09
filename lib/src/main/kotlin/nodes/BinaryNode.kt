@@ -15,6 +15,7 @@ import exceptions.NullNodeException
  */
 class BinaryNode<K : Comparable<K>, V>(key: K, value: V?) :
     AbstractNode<K, V, BinaryNode<K, V>>(key, value) {
+    override var color: Color = Color.DARK_GRAY
     fun search(key: K): BinaryNode<K, V>? =
         when (key.compareTo(this.key)) {
             1 -> this.right?.search(key)
