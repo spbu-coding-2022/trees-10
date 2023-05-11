@@ -10,9 +10,10 @@ class RBTPainter(
     width: Int
 ) : AbstractPainter<RBNode<Int, Int>, RBTree<Int, Int>>(tree, nodeMargin, nodeSize, width) {
     override fun getNodeColor(node: RBNode<Int, Int>): java.awt.Color {
-        return if (node.color == Color.RED)
+        return if (node.color == Color.RED){
             java.awt.Color.RED
-        else
+        } else if (node.color == Color.BLACK){
             java.awt.Color.BLACK
+        } else java.awt.Color.YELLOW
     }
 }

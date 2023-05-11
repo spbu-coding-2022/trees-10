@@ -11,6 +11,7 @@ import guiClasses.components.TreePanel
 import guiControl.painters.AVLPainter
 import guiControl.painters.BTPainter
 import guiControl.painters.RBTPainter
+import nodes.Color
 import trees.AVLTree
 import trees.BinaryTree
 import trees.RBTree
@@ -69,8 +70,8 @@ private lateinit var treePanel: TreePanel
 
 private lateinit var menuFrame: JFrame
 fun main() {
-    treeFrameInit()
     menuFrameInit()
+    treeFrameInit()
     loadDatabase()
 }
 
@@ -241,6 +242,50 @@ private fun menuFrameInit() {
         treeRepaint()
     }
 
+    val searchButton = JButton("Search")
+    val searchTextField = KeyTextField(searchButton)
+
+    searchButton.addActionListener {
+        var origNodeColor: Color = Color.BLACK
+        if (searchTextField.text.toIntOrNull() != null) {
+            val key = searchTextField.text.toInt()
+            try {
+                when (currentTree) {
+                    TreeTypes.RB -> {var node = Trees.RBTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+                    TreeTypes.BINARY -> {var node = Trees.binTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+                    TreeTypes.AVL -> {var node = Trees.AVLTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+
+                    else -> showMessage(Constants.NotChosenErrorMessage)
+                }
+
+            } catch (ex: NodeNotFoundException) {
+                showMessage(Constants.NotFoundErrorMessage)
+            }
+        } else
+            showMessage(Constants.InputErrorMessage)
+
+        treeRepaint()
+
+        if (searchTextField.text.toIntOrNull() != null) {
+            val key = searchTextField.text.toInt()
+            try {
+                when (currentTree) {
+                    TreeTypes.RB -> {var node = Trees.RBTree.search(key); node.color = origNodeColor}
+                    TreeTypes.BINARY -> {var node = Trees.binTree.search(key); node.color = origNodeColor}
+                    TreeTypes.AVL -> {var node = Trees.AVLTree.search(key); node.color = origNodeColor}
+
+                    else -> showMessage(Constants.NotChosenErrorMessage)
+                }
+
+            } catch (ex: NodeNotFoundException) {
+                showMessage(Constants.NotFoundErrorMessage)
+            }
+        } else
+            showMessage(Constants.InputErrorMessage)
+        searchTextField.text = ""
+    }
+
+
     val saveButton = JButton("Save")
     val clearButton = JButton("Clear")
 
@@ -340,11 +385,13 @@ private fun menuFrameInit() {
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(addButton)
                             .addComponent(removeButton)
+                            .addComponent(searchButton)
                     )
                     .addGroup( // Группа с TextFields
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(addTextField)
                             .addComponent(removeTextField)
+                            .addComponent(searchTextField)
                     )
             )
             .addComponent(saveButton)
@@ -365,6 +412,11 @@ private fun menuFrameInit() {
                     .addComponent(removeTextField)
             )
 
+            .addGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchButton)
+                    .addComponent(searchTextField)
+            )
 
             .addGroup(
                 layout.createSequentialGroup()
@@ -373,5 +425,4 @@ private fun menuFrameInit() {
             )
 
     )
-
 }
