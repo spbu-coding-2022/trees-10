@@ -1,5 +1,6 @@
 package app
 
+import databases.avl.Neo4jRepository
 import databases.json.RBTBase
 import databases.sqlite.BTBase
 import exceptions.NodeAlreadyExistsException
@@ -347,7 +348,19 @@ private fun menuFrameInit() {
             }
 
             TreeTypes.AVL -> {
-                showMessage("AVL tree saving is not implemented ;(")
+                val base = Neo4jRepository(
+                    "bolt://localhost:7687",
+                    "neo4j",
+                    "password",
+                    serializeValue = { value -> value?.toString() ?: "null" },
+                    deserializeValue = { value ->
+                        if (value == "null")
+                            0
+                        else
+                            value?.toInt()
+                    },
+                    deserializeKey = { value -> value.toInt() })
+                base.saveTree(Trees.AVLTree)
             }
 
             else -> showMessage(Constants.NotChosenErrorMessage)
