@@ -5,7 +5,6 @@ import org.neo4j.ogm.annotation.*
 import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
-import org.neo4j.ogm.cypher.Filters
 import org.neo4j.ogm.session.SessionFactory
 import trees.AVLTree
 import java.awt.Point
@@ -144,21 +143,4 @@ class Neo4jRepository<K : Comparable<K>, V>(
             mapOf("name" to name, "key" to serializeKey(key), "x" to point.x, "y" to point.y)
         )
     }
-
-    /*fun setPoint(key: K, p: Point) {
-        val savedTree = Json.decodeFromString<JsonRBTree>(file.readText())
-
-        if (savedTree.root?.changeCoordinate(key, p) != true)
-            throw NodeNotFoundException()
-
-        file.printWriter().use { out ->
-            out.write(Json.encodeToString(savedTree))
-        }
-
-    }
-
-    fun getPoint(key: K): Point {
-        return Json.decodeFromString<JsonRBTree>(file.readText()).root?.searchCoordinate(key)
-            ?: throw NodeNotFoundException()
-    }*/
 }
