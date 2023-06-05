@@ -384,7 +384,6 @@ private fun menuFrameInit() {
 
     // contentPane - контейнер для компонентов
     val layout = GroupLayout(menuFrame.contentPane)
-    menuFrame.contentPane.layout = layout
 
     layout.autoCreateContainerGaps = true
     layout.autoCreateGaps = true
@@ -438,4 +437,6 @@ private fun menuFrameInit() {
             )
 
     )
+
+    menuFrame.contentPane.layout = layout
 }
