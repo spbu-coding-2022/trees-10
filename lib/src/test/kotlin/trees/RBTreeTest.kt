@@ -1,3 +1,5 @@
+package trees
+
 import exceptions.*
 import nodes.*
 import org.junit.jupiter.api.Assertions.*

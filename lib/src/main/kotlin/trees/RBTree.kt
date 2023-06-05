@@ -57,7 +57,7 @@ class RBTree<K : Comparable<K>, V> : AbstractTree<K, V, RBNode<K, V>>() {
 
     private fun removeNode(node: RBNode<K, V>) {
         var replaceNode2: RBNode<K, V>
-        var replaceNode1: RBNode<K, V>
+        val replaceNode1: RBNode<K, V>
         var yOriginalColor = node.color
         if (node.right != null || node.left != null) {
             if (node.left == null) {
