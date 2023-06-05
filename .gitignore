@@ -1,0 +1,20 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# idea
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
+/.idea/
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+/gradle/
+/App/test.db
