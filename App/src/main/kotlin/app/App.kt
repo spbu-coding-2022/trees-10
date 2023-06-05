@@ -114,6 +114,28 @@ private fun loadDatabase() {
             showMessage(Constants.DataReadError)
         }
     }
+    try {
+        val base = Neo4jRepository(
+            "bolt://localhost:7687",
+            "neo4j",
+            "password",
+            serializeValue = { value -> value?.toString() ?: "null" },
+            deserializeValue = { value ->
+                if (value == "null")
+                    0
+                else
+                    value?.toInt()
+            },
+            deserializeKey = { value -> value.toInt() })
+
+        val tree = base.loadTree()
+
+        if (tree != null) {
+            Trees.AVLTree = tree
+        }
+    } catch (ex: Exception) {
+        showMessage(Constants.DataReadError)
+    }
 }
 
 private fun treeFrameInit() {
