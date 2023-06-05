@@ -17,6 +17,6 @@ dependencies {
     testImplementation "${KOTLIN_TEST_JUNIT}"
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
