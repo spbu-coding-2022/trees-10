@@ -274,9 +274,9 @@ private fun menuFrameInit() {
             val key = searchTextField.text.toInt()
             try {
                 when (currentTree) {
-                    TreeTypes.RB -> {var node = Trees.RBTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
-                    TreeTypes.BINARY -> {var node = Trees.binTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
-                    TreeTypes.AVL -> {var node = Trees.AVLTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+                    TreeTypes.RB -> {val node = Trees.RBTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+                    TreeTypes.BINARY -> {val node = Trees.binTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
+                    TreeTypes.AVL -> {val node = Trees.AVLTree.search(key); origNodeColor = node.color; node.color = Color.YELLOW}
 
                     else -> showMessage(Constants.NotChosenErrorMessage)
                 }
@@ -293,9 +293,9 @@ private fun menuFrameInit() {
             val key = searchTextField.text.toInt()
             try {
                 when (currentTree) {
-                    TreeTypes.RB -> {var node = Trees.RBTree.search(key); node.color = origNodeColor}
-                    TreeTypes.BINARY -> {var node = Trees.binTree.search(key); node.color = origNodeColor}
-                    TreeTypes.AVL -> {var node = Trees.AVLTree.search(key); node.color = origNodeColor}
+                    TreeTypes.RB -> {val node = Trees.RBTree.search(key); node.color = origNodeColor}
+                    TreeTypes.BINARY -> {val node = Trees.binTree.search(key); node.color = origNodeColor}
+                    TreeTypes.AVL -> {val node = Trees.AVLTree.search(key); node.color = origNodeColor}
 
                     else -> showMessage(Constants.NotChosenErrorMessage)
                 }

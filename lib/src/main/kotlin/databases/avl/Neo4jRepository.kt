@@ -62,7 +62,7 @@ class Neo4jRepository<K : Comparable<K>, V>(
     private val configuration: Configuration = Configuration.Builder()
         .uri(uri)
         .credentials(username, password)
-        .build();
+        .build()
 
     private val sessionFactory = SessionFactory(configuration, "databases.avl")
     private val session = sessionFactory.openSession()
@@ -116,7 +116,7 @@ class Neo4jRepository<K : Comparable<K>, V>(
         return treeEntity?.toTree()
     }
 
-    fun deleteTree(name: String = "Default") {
+    private fun deleteTree(name: String = "Default") {
         session.query(
     "MATCH (t: AVLTreeEntity {name: \$name})-[*0..]-(x)" +
             "DETACH DELETE x",
