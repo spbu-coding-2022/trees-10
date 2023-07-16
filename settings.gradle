@@ -1,0 +1,2 @@
+rootProject.name = 'trees-10'
+include('lib', "App")

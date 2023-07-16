@@ -1,0 +1,22 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "${KOTLIN_JVM_VERSION}"
+    id 'application'
+}
+
+application {
+    mainClass = 'app.AppKt'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(path: ':lib')
+
+    testImplementation "${KOTLIN_TEST_JUNIT}"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
